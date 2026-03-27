@@ -1,34 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<extension type="package" version="3.1" method="upgrade">
-    <name>PLG_JUMULTITHUMB</name>
-    <packagename>jumultithumb</packagename>
-    <creationDate>@date@</creationDate>
-    <packager>Joomla! Ukraine</packager>
-    <copyright>(C) 2007-2023 Denys Nosov, Joomla! Ukraine</copyright>
-    <packagerurl>https://joomla-ua.org</packagerurl>
-    <author>Denys Nosov, Joomla! Ukraine</author>
-    <authorEmail>denys@joomla-ua.org</authorEmail>
-    <authorUrl>https://joomla-ua.org</authorUrl>
-    <version>@version@</version>
-    <license>GNU/GPL Version 2 or later and Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 License</license>
-    <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
-    <scriptfile>script.php</scriptfile>
-    <update>https://joomla-ua.org/update/plg/jumultithumb.xml</update>
-    <updateservers>
-        <server type="extension" priority="1" name="JUMultiThumb">https://joomla-ua.org/update/plg/jumultithumb.xml
-        </server>
-    </updateservers>
-    <files folder="packages">
-        <file type="plugin" id="jumultithumb" group="content">plg_jumultithumb.zip</file>
-        <file type="plugin" id="jumultithumb_contentform" group="content">plg_jumultithumb_contentform.zip</file>
-        <file type="plugin" id="jumultithumb_gallery" group="content">plg_jumultithumb_gallery.zip</file>
-        <file type="plugin" id="jumultithumb_editorbutton" group="editors-xtd">plg_jumultithumb_editorbutton.zip</file>
-        <file type="package" id="package">pkg_juimage_v@juimage@.zip</file>
-    </files>
-    <languages folder="language">
-        <language tag="en-GB">en-GB/en-GB.pkg_jumultithumb.ini</language>
-        <language tag="en-GB">en-GB/en-GB.pkg_jumultithumb.sys.ini</language>
-        <language tag="uk-UA">uk-UA/uk-UA.pkg_jumultithumb.ini</language>
-        <language tag="uk-UA">uk-UA/uk-UA.pkg_jumultithumb.sys.ini</language>
-    </languages>
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" version="3.9" client="site" method="upgrade">
+    <name>JUMultiThumb</name>
+    <copyright>(C) 2007-2026</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <description>A Joomla! extension for multi-image thumbnails.</description>
+    <author>SamusUA</author>
+    <version>1.0.0</version>
+    <creationDate>2013-08-20</creationDate>
+    <updateDate>2016-03-27</updateDate>
 </extension>
