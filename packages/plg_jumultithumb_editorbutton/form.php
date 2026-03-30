@@ -6,7 +6,7 @@
  * @subpackage       pkg_jumultithumb
  *
  * @author           Denys Nosov, denys@joomla-ua.org
- * @copyright        2007-2023 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
+ * @copyright        2007-2026 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -20,6 +20,8 @@ require_once JPATH_BASE . '/includes/framework.php';
 
 use Joomla\CMS\Application\AdministratorApplication;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Session\SessionInterface;
 
 $container = Factory::getContainer();
@@ -36,12 +38,12 @@ $language = mb_strtolower($lang->getTag());
 
 if($joomlaUser->get('id') < 1)
 {
-	echo JText::_('PLG_JUMULTITHUMB_LOGIN');
+	echo Text::_('PLG_JUMULTITHUMB_LOGIN');
 
 	return;
 }
 
-$plugin     = JPluginHelper::getPlugin('content', 'jumultithumb_gallery');
+$plugin     = PluginHelper::getPlugin('content', 'jumultithumb_gallery');
 $json       = json_decode($plugin->params);
 $rootfolder = 'images/' . $json->galleryfolder . '/';
 
@@ -50,7 +52,7 @@ $rootfolder = 'images/' . $json->galleryfolder . '/';
 <html lang="<?php echo $language; ?>">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?></title>
+	<title><?php echo Text::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?></title>
 
 	<link href="/media/templates/administrator/atum/css/template.css" rel="stylesheet" data-asset-name="template.atum.ltr" data-asset-dependencies="fontawesome" />
 
@@ -114,7 +116,7 @@ $rootfolder = 'images/' . $json->galleryfolder . '/';
 <body>
 <form class="form-horizontal">
 	<div class="control-group">
-		<label class="control-label" for="folder"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_SELECT_FOLDER'); ?>:</label>
+		<label class="control-label" for="folder"><?php echo Text::_('PLG_JUMULTITHUMB_GALLERY_SELECT_FOLDER'); ?>:</label>
 		<div class="controls">
 			<div class="selects"></div>
 			<br>
@@ -122,13 +124,13 @@ $rootfolder = 'images/' . $json->galleryfolder . '/';
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="title"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_TITLE'); ?>:</label>
+		<label class="control-label" for="title"><?php echo Text::_('PLG_JUMULTITHUMB_GALLERY_TITLE'); ?>:</label>
 		<div class="controls">
 			<input type="text" id="title" name="title" size="60" value="" />
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="cssclass"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_CSS_CLASS'); ?>:</label>
+		<label class="control-label" for="cssclass"><?php echo Text::_('PLG_JUMULTITHUMB_GALLERY_CSS_CLASS'); ?>:</label>
 		<div class="controls">
 			<input type="text" id="cssclass" name="cssclass" size="60" />
 		</div>
@@ -136,7 +138,7 @@ $rootfolder = 'images/' . $json->galleryfolder . '/';
 	<div class="control-group">
 		<div class="controls">
 			<button onclick="insertJUGallery();" class="btn btn-success">
-				<?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?>
+				<?php echo Text::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?>
 			</button>
 		</div>
 	</div>
