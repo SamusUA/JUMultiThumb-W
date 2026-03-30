@@ -6,7 +6,7 @@
  * @subpackage       pkg_jumultithumb
  *
  * @author           Denys Nosov, denys@joomla-ua.org
- * @copyright        2007-2023 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
+ * @copyright        2007-2026 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -18,14 +18,16 @@ require_once JPATH_BASE . '/includes/defines.php';
 require_once JPATH_BASE . '/includes/framework.php';
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
-$mainframe  = Factory::getApplication('administrator');
+$app        = Factory::getApplication();
 $joomlaUser = Factory::getUser();
 $lang       = Factory::getLanguage();
 $lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
 
-$csslink = '<link href="../../../../administrator/templates/isis/css/template.css" rel="stylesheet" type="text/css" />
-<link href="../../../../media/jui/css/bootstrap.css" rel="stylesheet" type="text/css" />';
+$csslink = '<link href="../../../../media/templates/administrator/atum/css/template.css" rel="stylesheet" type="text/css" />'
+         . PHP_EOL
+         . '<link href="../../../../media/jui/css/bootstrap.css" rel="stylesheet" type="text/css" />';
 
 function alert($text, $error)
 {
@@ -51,7 +53,7 @@ function alert($text, $error)
 		<?php echo $csslink; ?>
     </head>
     <body>
-	<?php echo alert(JText::_('PLG_JUMULTITHUMB_LOGIN'), 'notice'); ?>
+	<?php echo alert(Text::_('PLG_JUMULTITHUMB_LOGIN'), 'notice'); ?>
     </body>
     </html>
 	<?php
@@ -97,7 +99,7 @@ if(!file_exists($style))
 	$file = fopen($style, 'wb');
 	fwrite($file, $newcss);
 	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE1') . '<br>' . JText::_('PLG_JUMULTITHUMB_NOTICE2'), 'notice');
+	$notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE1') . '<br>' . Text::_('PLG_JUMULTITHUMB_NOTICE2'), 'notice');
 }
 
 if(file_exists($style) && !empty($_POST['txt']))
@@ -105,7 +107,7 @@ if(file_exists($style) && !empty($_POST['txt']))
 	$file = fopen($style, 'wb');
 	fwrite($file, $_POST['txt']);
 	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE3'), 'message');
+	$notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE3'), 'message');
 }
 
 if(filesize($style) < 3)
@@ -113,7 +115,7 @@ if(filesize($style) < 3)
 	$file = fopen($style, 'wb');
 	fwrite($file, $newcss);
 	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE4') . '<br>' . JText::_('PLG_JUMULTITHUMB_NOTICE5'), 'notice');
+	$notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE4') . '<br>' . Text::_('PLG_JUMULTITHUMB_NOTICE5'), 'notice');
 }
 
 ?>
@@ -145,9 +147,9 @@ if(filesize($style) < 3)
 } ?>
 <form action="css.php" method="post">
 
-	<?php echo JText::_('PLG_JUMULTITHUMB_CSS_FRONT'); ?>
+	<?php echo Text::_('PLG_JUMULTITHUMB_CSS_FRONT'); ?>
     <button type="submit" class="btn btn-primary right"><i
-                class="icon-apply icon-white"></i> <?php echo JText::_('PLG_JUMULTITHUMB_CSS_SAVE'); ?></button>
+                class="icon-apply icon-white"></i> <?php echo Text::_('PLG_JUMULTITHUMB_CSS_SAVE'); ?></button>
 
     <textarea name="txt" style="width: 100%; height: 585px; clear: both;"
               id="css_source"><?php readfile($style); ?></textarea>
