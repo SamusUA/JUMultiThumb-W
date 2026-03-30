@@ -1,25 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extension version="3.1"
-           type="plugin"
-           group="editors-xtd"
-           method="upgrade">
-    <name>plg_jumultithumb_editorbutton</name>
-    <author>Denys Nosov</author>
-    <creationDate>@date@</creationDate>
-    <copyright>(C) 2007-2023 Denys Nosov. All rights reserved.</copyright>
-    <license>https://creativecommons.org/licenses/by-nc-nd/3.0/ Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 License
-    </license>
-    <authorEmail>denys@joomla-ua.org</authorEmail>
-    <authorUrl>joomla-ua.org</authorUrl>
-    <version>@version@</version>
-    <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
-    <files>
-        <filename plugin="jumultithumb_editorbutton">jumultithumb_editorbutton.php</filename>
-        <folder>assets</folder>
-        <filename>form.php</filename>
-    </files>
+<editorbutton>
+    <version>5.0</version>
+    <creationDate>2013-08-20</creationDate>
+    <version>7.0.0</version>
+    <copyright>2007-2026</copyright>
+    <authorUrl>https://joomla-ua.org</authorUrl>
     <languages>
-        <language tag="en-GB">language/en-GB/en-GB.plg_editors-xtd_jumultithumb_editorbutton.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.plg_editors-xtd_jumultithumb_editorbutton.sys.ini</language>
+        <language tag="uk-UA"/>
     </languages>
-</extension>
+</editorbutton>
