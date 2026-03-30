@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="package" version="3.9" client="site" method="upgrade">
+<extension type="package" version="5.0" client="site" method="upgrade">
     <name>JUMultiThumb</name>
-    <copyright>(C) 2007-2026</copyright>
+    <packagename>jumultithumb</packagename>
+    <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <description>A Joomla! extension for multi-image thumbnails.</description>
-    <author>SamusUA</author>
-    <version>1.0.0</version>
+    <description>A Joomla! extension for multi-image thumbnails and image processing in articles</description>
+    <author>Denys Nosov, Joomla! Ukraine</author>
+    <authorEmail>denys@joomla-ua.org</authorEmail>
+    <authorUrl>https://joomla-ua.org</authorUrl>
+    <version>7.0.0</version>
     <creationDate>2013-08-20</creationDate>
-    <updateDate>2016-03-27</updateDate>
+    <updateDate>2026-03-30</updateDate>
+    <scriptfile>script.php</scriptfile>
+    
+    <updateservers>
+        <server type="extension" priority="1" name="JUMultiThumb">https://joomla-ua.org/update/plg/jumultithumb.xml</server>
+    </updateservers>
+    
+    <!-- Direct plugin folders instead of zip files for Joomla 5.0+ -->
+    <files folder="packages">
+        <!-- Main JUMultiThumb Content Plugin -->
+        <folder type="plugin" id="jumultithumb" group="content" target="plugins/content">plg_jumultithumb</folder>
+        
+        <!-- Content Form Plugin -->
+        <folder type="plugin" id="jumultithumb_contentform" group="content" target="plugins/content">plg_jumultithumb_contentform</folder>
+        
+        <!-- Gallery Plugin -->
+        <folder type="plugin" id="jumultithumb_gallery" group="content" target="plugins/content">plg_jumultithumb_gallery</folder>
+        
+        <!-- Editor Button Plugin -->
+        <folder type="plugin" id="jumultithumb_editorbutton" group="editors-xtd" target="plugins/editors-xtd">plg_jumultithumb_editorbutton</folder>
+    </files>
+    
+    <!-- Languages -->
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.pkg_jumultithumb.ini</language>
+        <language tag="en-GB">en-GB/en-GB.pkg_jumultithumb.sys.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.pkg_jumultithumb.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.pkg_jumultithumb.sys.ini</language>
+    </languages>
 </extension>
