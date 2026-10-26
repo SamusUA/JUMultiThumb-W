@@ -10,90 +10,112 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace JUMultiThumb\Adapters;
-
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
-use Joomla\Component\Content\Site\Helper\RouteHelper;
-use JURI;
+use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die;
-
-class com_content
+class Pkg_JUMultiThumbInstallerScript
 {
-	/**
-	 * @param $type
-	 *
-	 * @return string
-	 *
-	 * @throws \Exception
-	 * @since 7.0
-	 */
-	public static function view($type): string
-	{
-		$app    = Factory::getApplication();
-		$option = $app->input->get('option');
-		$view   = $app->input->get('view');
-		$layout = $app->input->get('layout');
-		$print  = $app->input->get('print');
+    protected $dbSupport = ['mysql', 'mysqli', 'postgresql', 'sqlsrv', 'sqlazure'];
+    protected $message;
+    protected $status;
 
-		switch($type)
-		{
-			case 'Component':
-				return ($option === 'com_content');
+    public function preflight()
+    {
+        if (version_compare(JVERSION, '4.0', 'lt'))
+        {
+            Factory::getApplication()->enqueueMessage('Update for Joomla! 4.0+ required.', 'error');
 
-			case 'CatBlog':
-				return (($view === 'category' && ($layout === 'blog')) || ($view === 'category' && ($layout === 'card')));
+            return false;
+        }
 
-			case 'Blog':
-				return ($layout === 'blog');
+        $lang = Factory::getLanguage();
+        $lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
 
-			case 'Category':
-				return ($view === 'categories' && !$layout);
+        if (!in_array(Factory::getDbo()->name, $this->dbSupport, true))
+        {
+            Factory::getApplication()->enqueueMessage(Text::_('PLG_JUMULTITHUMB_ERROR_DB_SUPPORT'), 'error');
 
-			case 'Categories':
-				return ($view === 'categories');
+            return false;
+        }
 
-			case 'Featured':
-				return ($view === 'featured');
+        $this->makeDir(JPATH_SITE . '/img');
 
-			case 'Print':
-				return ($print == '1');
+        if (!is_dir(JPATH_SITE . '/img/'))
+        {
+            Factory::getApplication()->enqueueMessage("Error creating folder 'img'. Please manually create the folder 'img' in the root of the site where you installed Joomla!", 'error');
+        }
 
-			case 'Article':
-				return ($view === 'article');
-		}
+        $cache = Factory::getCache('plg_jumultithumb');
+        $cache->clean();
 
-		return '';
-	}
+        return true;
+    }
 
-	/**
-	 * @param $article
-	 *
-	 * @return string
-	 *
-	 * @throws \Exception
-	 * @since 7.0
-	 */
-	public static function link($article): string
-	{
-		$app = Factory::getApplication();
+    private function makeDir($dir)
+    {
+        if (@mkdir($dir, 0777, true) || is_dir($dir))
+        {
+            return true;
+        }
 
-		if($article->params->get('access-view'))
-		{
-			$link = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
-		}
-		else
-		{
-			$active    = $app->getMenu()->getActive();
-			$itemId    = $active->id;
-			$link1     = Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId);
-			$returnURL = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
-			$link      = new JURI($link1);
+        if (!$this->makeDir(dirname($dir)))
+        {
+            return false;
+        }
 
-			$link->setVar('return', base64_encode($returnURL));
-		}
+        return mkdir($dir, 0777, true);
+    }
 
-		return $link;
-	}
+    public function postflight()
+    {
+        $db = Factory::getDbo();
+
+        $query = 'UPDATE `#__extensions` SET `enabled` = 1, `ordering` = -100 WHERE `element` = ' . $db->quote('jumultithumb') . ' AND `type` = ' . $db->quote('plugin') . ' AND `client_id` = 0';
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = 'UPDATE `#__extensions` SET `enabled` = 1, `ordering` = -99 WHERE `element` = ' . $db->quote('jumultithumb_gallery') . ' AND `type` = ' . $db->quote('plugin') . ' AND `client_id` = 0';
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = 'UPDATE `#__extensions` SET `enabled` = 1 WHERE `element` = ' . $db->quote('jumultithumb_editorbutton') . ' AND `type` = ' . $db->quote('plugin') . ' AND `client_id` = 0';
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = 'UPDATE `#__extensions` SET `enabled` = 1 WHERE `element` = ' . $db->quote('jumultithumb_contentform') . ' AND `type` = ' . $db->quote('plugin') . ' AND `client_id` = 0';
+        $db->setQuery($query);
+        $db->execute();
+
+        return true;
+    }
+
+    public function unlinkRecursive($dir, $deleteRootToo = false)
+    {
+        if (!$dh = opendir($dir))
+        {
+            return true;
+        }
+
+        while (($obj = readdir($dh)) !== false)
+        {
+            if ($obj === '.' || $obj === '..')
+            {
+                continue;
+            }
+
+            if (!unlink($dir . '/' . $obj))
+            {
+                $this->unlinkRecursive($dir . '/' . $obj, true);
+            }
+        }
+
+        closedir($dh);
+
+        if ($deleteRootToo)
+        {
+            @rmdir($dir);
+        }
+
+        return true;
+    }
 }

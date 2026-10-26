@@ -10,147 +10,71 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-define('_JEXEC', 1);
-define('JPATH_BASE', __DIR__ . '/../../../..');
-define('MAX_SIZE', '500');
-
-require_once JPATH_BASE . '/includes/defines.php';
-require_once JPATH_BASE . '/includes/framework.php';
+namespace JUMultiThumb\Adapters;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Content\Site\Helper\RouteHelper;
 
-$mainframe  = Factory::getApplication('administrator');
-$joomlaUser = Factory::getUser();
-$lang       = Factory::getLanguage();
-$lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
+defined('_JEXEC') or die;
 
-$csslink = '<link href="../../../../administrator/templates/isis/css/template.css" rel="stylesheet" type="text/css" />
-<link href="../../../../media/jui/css/bootstrap.css" rel="stylesheet" type="text/css" />';
-
-function alert($text, $error)
+class com_content
 {
-	if($error === 'message')
-	{
-		$error = 'alert-info';
-	}
+    public static function view($type): string
+    {
+        $app = Factory::getApplication();
+        $option = $app->input->get('option');
+        $view = $app->input->get('view');
+        $layout = $app->input->get('layout');
+        $print = $app->input->get('print');
 
-	if($error === 'notice')
-	{
-		$error = 'alert-error';
-	}
+        switch ($type)
+        {
+            case 'Component':
+                return ($option === 'com_content') ? '1' : '0';
 
-	return '<div class="alert ' . $error . '">' . $text . '</div>';
-}
+            case 'CatBlog':
+                return (($view === 'category' && ($layout === 'blog')) || ($view === 'category' && ($layout === 'card'))) ? '1' : '0';
 
-?>
-<?php if($joomlaUser->get('id') < 1) : ?>
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta content="charset=utf-8"/>
-		<?php echo $csslink; ?>
-    </head>
-    <body>
-	<?php echo alert(JText::_('PLG_JUMULTITHUMB_LOGIN'), 'notice'); ?>
-    </body>
-    </html>
-	<?php
-	return;
-endif;
+            case 'Blog':
+                return ($layout === 'blog') ? '1' : '0';
 
-$style = JPATH_BASE . '/media/plg_jumultithumb/style.css';
+            case 'Category':
+                return ($view === 'categories' && !$layout) ? '1' : '0';
 
-$newcss = '/*
------------------------------------------------
-File:    style.css
-Author:  Denys Nosov at https://www.denysdesign.com
-Version: ' . date('d.m.Y') . '
+            case 'Categories':
+                return ($view === 'categories') ? '1' : '0';
 
-License: Free
------------------------------------------------ */
+            case 'Featured':
+                return ($view === 'featured') ? '1' : '0';
 
-.juimage {
-  border: #ccc 1px solid;
-  padding: 1px;
-}
-.juimg-category {
+            case 'Print':
+                return ($print == '1') ? '1' : '0';
 
-}
-.juimg-featured {
-
-}
-.juimg-article {
-
-}
-.juleft {
-  float: left;
-  margin: 0 6px 6px 0;
-}
-.juright {
-  float: right;
-  margin: 0 0 6px 6px;
-}
-';
-
-if(!file_exists($style))
-{
-	$file = fopen($style, 'wb');
-	fwrite($file, $newcss);
-	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE1') . '<br>' . JText::_('PLG_JUMULTITHUMB_NOTICE2'), 'notice');
-}
-
-if(file_exists($style) && !empty($_POST['txt']))
-{
-	$file = fopen($style, 'wb');
-	fwrite($file, $_POST['txt']);
-	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE3'), 'message');
-}
-
-if(filesize($style) < 3)
-{
-	$file = fopen($style, 'wb');
-	fwrite($file, $newcss);
-	fclose($file);
-	$notice = alert(JText::_('PLG_JUMULTITHUMB_NOTICE4') . '<br>' . JText::_('PLG_JUMULTITHUMB_NOTICE5'), 'notice');
-}
-
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta content="charset=utf-8"/>
-	<?php echo $csslink; ?>
-    <style>
-        body {
-            background: transparent;
-            font-size: 102%;
-            margin: 0 20px 0 20px;
+            case 'Article':
+                return ($view === 'article') ? '1' : '0';
         }
 
-        .left {
-            float: left;
+        return '';
+    }
+
+    public static function link($article): string
+    {
+        $app = Factory::getApplication();
+
+        if (!empty($article->params) && $article->params->get('access-view'))
+        {
+            return Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
         }
 
-        .right {
-            float: right;
-        }
-    </style>
-</head>
-<body>
-<?php if(isset($notice))
-{
-	echo $notice;
-} ?>
-<form action="css.php" method="post">
+        $active = $app->getMenu()->getActive();
+        $itemId = $active ? $active->id : 0;
+        $link1 = Route::_('index.php?option=com_users&view=login&Itemid=' . (int) $itemId);
+        $returnURL = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
+        $link = new Uri($link1);
+        $link->setVar('return', base64_encode($returnURL));
 
-	<?php echo JText::_('PLG_JUMULTITHUMB_CSS_FRONT'); ?>
-    <button type="submit" class="btn btn-primary right"><i
-                class="icon-apply icon-white"></i> <?php echo JText::_('PLG_JUMULTITHUMB_CSS_SAVE'); ?></button>
-
-    <textarea name="txt" style="width: 100%; height: 585px; clear: both;"
-              id="css_source"><?php readfile($style); ?></textarea>
-</form>
-</body>
-</html>
+        return (string) $link;
+    }
+}

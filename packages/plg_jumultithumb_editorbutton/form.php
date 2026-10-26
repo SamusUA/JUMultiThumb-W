@@ -10,136 +10,35 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-define('_JEXEC', 1);
-define('DS', DIRECTORY_SEPARATOR);
-define('JPATH_BASE', __DIR__ . '/../../..');
-define('MAX_SIZE', '500');
+use Joomla\CMS\Form\FormField;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
-require_once JPATH_BASE . '/includes/defines.php';
-require_once JPATH_BASE . '/includes/framework.php';
+defined('JPATH_BASE') or die;
 
-use Joomla\CMS\Application\AdministratorApplication;
-use Joomla\CMS\Factory;
-use Joomla\Session\SessionInterface;
-
-$container = Factory::getContainer();
-$container->alias(SessionInterface::class, 'session.web.site');
-
-$app = $container->get(AdministratorApplication::class);
-
-$joomlaUser = Factory::getUser();
-$lang       = Factory::getLanguage();
-$doc        = Factory::getDocument();
-
-$lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
-$language = mb_strtolower($lang->getTag());
-
-if($joomlaUser->get('id') < 1)
+class JFormFieldModal_Upload extends FormField
 {
-	echo JText::_('PLG_JUMULTITHUMB_LOGIN');
+    protected $type = 'Modal_Upload';
 
-	return;
+    protected function getInput()
+    {
+        $link = Uri::root() . 'plugins/content/jumultithumb/load/watermark/watermark.php';
+
+        $modalParams = [
+            'title'      => Text::_('PLG_JUMULTITHUMB_WATERMARK_UPLOAD'),
+            'url'        => $link,
+            'height'     => '100%',
+            'width'      => '100%',
+            'bodyHeight' => 70,
+            'modalWidth' => 80,
+        ];
+
+        $html = HTMLHelper::_('bootstrap.renderModal', 'modal-' . $this->id, $modalParams);
+        $html .= '<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-' . $this->id . '">'
+            . Text::_('PLG_JUMULTITHUMB_WATERMARK_UPLOAD')
+            . '</button>';
+
+        return $html;
+    }
 }
-
-$plugin     = JPluginHelper::getPlugin('content', 'jumultithumb_gallery');
-$json       = json_decode($plugin->params);
-$rootfolder = 'images/' . $json->galleryfolder . '/';
-
-?>
-<!DOCTYPE html>
-<html lang="<?php echo $language; ?>">
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?></title>
-
-	<link href="/media/templates/administrator/atum/css/template.css" rel="stylesheet" data-asset-name="template.atum.ltr" data-asset-dependencies="fontawesome" />
-
-	<link href="assets/jqueryFileTree.css" rel="stylesheet" type="text/css" />
-
-	<script src="/media/vendor/jquery/js/jquery.js?3.6.0" data-asset-name="jquery"></script>
-	<script src="assets/jqueryFileTree.js?v3"></script>
-
-	<script>
-        jQuery.noConflict();
-        jQuery(document).ready(function () {
-            jQuery('.selects').fileTree({
-                root: '<?php echo $rootfolder; ?>',
-                script: 'assets/jqueryFileTree.php',
-                expandSpeed: 1000,
-                collapseSpeed: 1000,
-                multiFolder: false
-            });
-        });
-
-        function insertJUGallery() {
-            var folder = document.getElementById("folder").value,
-                title = document.getElementById("title").value,
-                cssclass = document.getElementById("cssclass").value;
-
-            if (folder !== '') {
-                folder = "" + folder + "";
-            }
-
-            if (title === '' && cssclass !== '') {
-                title = "|";
-            } else if (title !== '') {
-                title = "|" + title;
-            } else {
-                title = "";
-            }
-
-            if (cssclass !== '') {
-                cssclass = "|" + cssclass;
-            }
-
-            var tag = "{gallery " + folder + title + cssclass + "}";
-
-            window.parent.Joomla.editors.instances['jform_articletext'].replaceSelection(tag);
-            window.parent.Joomla.Modal.getCurrent().close();
-
-            return false;
-        }
-
-	</script>
-	<style>
-        body {
-            background: transparent;
-        }
-
-        fieldset {
-            margin: 5px 0 !important;
-        }
-	</style>
-</head>
-<body>
-<form class="form-horizontal">
-	<div class="control-group">
-		<label class="control-label" for="folder"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_SELECT_FOLDER'); ?>:</label>
-		<div class="controls">
-			<div class="selects"></div>
-			<br>
-			<input id="folder" class="folderurl uneditable-input" name="selectfolder" disabled="disabled" style="width:30%">
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="title"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_TITLE'); ?>:</label>
-		<div class="controls">
-			<input type="text" id="title" name="title" size="60" value="" />
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label" for="cssclass"><?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_CSS_CLASS'); ?>:</label>
-		<div class="controls">
-			<input type="text" id="cssclass" name="cssclass" size="60" />
-		</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<button onclick="insertJUGallery();" class="btn btn-success">
-				<?php echo JText::_('PLG_JUMULTITHUMB_GALLERY_INSERT_TAG'); ?>
-			</button>
-		</div>
-	</div>
-</form>
-</body>
-</html>

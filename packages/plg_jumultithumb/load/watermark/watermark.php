@@ -10,318 +10,136 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-define('_JEXEC', 1);
-define('JPATH_BASE', __DIR__ . '/../../../../..');
-define('MAX_SIZE', '500');
 
+defined('_JEXEC') or die;
+
+define('JPATH_BASE', dirname(__DIR__, 4));
 require_once JPATH_BASE . '/includes/defines.php';
 require_once JPATH_BASE . '/includes/framework.php';
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
-$app        = Factory::getApplication('administrator');
-$joomlaUser = Factory::getUser();
-$lang       = Factory::getLanguage();
+$app = Factory::getApplication('administrator');
+$user = Factory::getUser();
+$lang = Factory::getLanguage();
 $lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
 
-/**
- * @param $text
- * @param $error
- *
- * @return string
- *
- * @since 7.0
- */
-function alert($text, $error)
+$cssLink = '<link href="' . Uri::root(true) . '/administrator/templates/atum/css/template.css" rel="stylesheet" type="text/css" />';
+$cssLink .= '<link href="' . Uri::root(true) . '/media/system/css/joomla-admin.css" rel="stylesheet" type="text/css" />';
+
+function alert($text, $error = 'notice')
 {
-	if($error === 'message')
-	{
-		$error = 'alert-info';
-	}
+    if ($error === 'message')
+    {
+        $error = 'alert-info';
+    }
 
-	if($error === 'notice')
-	{
-		$error = 'alert-error';
-	}
+    if ($error === 'notice')
+    {
+        $error = 'alert-error';
+    }
 
-	return '<div class="alert ' . $error . '">' . $text . '</div>';
+    return '<div class="alert ' . $error . '">' . $text . '</div>';
+}
+?>
+<?php if ((int) $user->id < 1) : ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <?php echo $cssLink; ?>
+</head>
+<body>
+    <?php echo alert(Text::_('PLG_JUMULTITHUMB_LOGIN'), 'notice'); ?>
+</body>
+</html>
+<?php
+    return;
+endif;
+?>
+
+<?php
+$style = JPATH_ROOT . '/media/plg_jumultithumb/style.css';
+
+$newCss = '/*
+-----------------------------------------------
+File:    style.css
+Author:  Denys Nosov at https://www.denysdesign.com
+Version: ' . date('d.m.Y') . '
+
+License: Free
+----------------------------------------------- */
+
+.juimage {
+  border: #ccc 1px solid;
+  padding: 1px;
+}
+.juimg-category { }
+.juimg-featured { }
+.juimg-article { }
+.juleft {
+  float: left;
+  margin: 0 6px 6px 0;
+}
+.juright {
+  float: right;
+  margin: 0 0 6px 6px;
+}
+';
+
+if (!is_dir(dirname($style)))
+{
+    mkdir(dirname($style), 0777, true);
 }
 
-/**
- * @param $str
- *
- * @return bool|string
- *
- * @since 7.0
- */
-function getExtension($str)
+if (!file_exists($style))
 {
-	$i = strrpos($str, '.');
-
-	if(!$i)
-	{
-		return '';
-	}
-
-	$l = strlen($str) - $i;
-
-	return substr($str, $i + 1, $l);
+    file_put_contents($style, $newCss);
+    $notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE1') . '<br>' . Text::_('PLG_JUMULTITHUMB_NOTICE2'), 'notice');
 }
 
-$csslink = '<link href="../../../../../administrator/templates/isis/css/template.css" rel="stylesheet" type="text/css" /><link href="../../../../../media/jui/css/bootstrap.css" rel="stylesheet" type="text/css" />';
-
-if($joomlaUser->get('id') < 1)
+if (file_exists($style) && !empty($_POST['txt']))
 {
-	?>
-    <!DOCTYPE html>
-    <html>
-    <head><?php echo $csslink; ?></head>
-    <body><?php echo alert(JText::_('PLG_JUMULTITHUMB_LOGIN'), 'notice'); ?></body>
-    </html>
-	<?php
-	return;
+    file_put_contents($style, $_POST['txt']);
+    $notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE3'), 'message');
 }
 
-$errors = 0;
-if(isset($_POST['Submit'], $_FILES['image']['name']))
+if (file_exists($style) && filesize($style) < 3)
 {
-	$filename  = stripslashes($_FILES['image']['name']);
-	$extension = getExtension($filename);
-	$extension = strtolower($extension);
-
-	if($extension != 'png')
-	{
-		if(isset($_POST['watermark']) == 'big')
-		{
-			$unknownext = alert(JText::_('PLG_JUMULTITHUMB_NOTICE6'), 'notice');
-		}
-        elseif(isset($_POST['watermark']) == 'small')
-		{
-			$unknownext_s = alert(JText::_('PLG_JUMULTITHUMB_NOTICE6'), 'notice');
-		}
-		$errors = 1;
-	}
-	else
-	{
-		$size = $_FILES['image']['size'];
-		if($size > MAX_SIZE * 1000024)
-		{
-			if(isset($_POST['watermark']) == 'big')
-			{
-				$limitimg = alert(JText::_('PLG_JUMULTITHUMB_NOTICE7'), 'notice');
-			}
-            elseif(isset($_POST['watermark']) == 'small')
-			{
-				$limitimg_s = alert(JText::_('PLG_JUMULTITHUMB_NOTICE7'), 'notice');
-			}
-
-			$errors = 1;
-		}
-
-		if($_POST['watermark'] == 'big')
-		{
-			$image_name = 'w.png';
-		}
-        elseif($_POST['watermark'] == 'small')
-		{
-			$image_name = 'ws.png';
-		}
-
-		if(!($size > MAX_SIZE * 1000024))
-		{
-			$newname = JPATH_SITE . '/plugins/content/jumultithumb/load/watermark/' . $image_name;
-
-			if(!move_uploaded_file($_FILES['image']['tmp_name'], $newname))
-			{
-				if(isset($_POST['watermark']) == 'big')
-				{
-					$uploadunsuccessfull = alert(JText::_('PLG_JUMULTITHUMB_NOTICE8'), 'notice');
-				}
-                elseif(isset($_POST['watermark']) == 'small')
-				{
-					$uploadunsuccessfull_s = alert(JText::_('PLG_JUMULTITHUMB_NOTICE8'), 'notice');
-				}
-				$errors = 1;
-			}
-		}
-	}
-}
-
-if(isset($_POST['Submit']) && !$errors)
-{
-	if(isset($_POST['watermark']) === 'big')
-	{
-		$uploadsucess = alert(JText::_('PLG_JUMULTITHUMB_NOTICE9'), 'message');
-	}
-    elseif(isset($_POST['watermark']) === 'small')
-	{
-		$uploadsucess_s = alert(JText::_('PLG_JUMULTITHUMB_NOTICE9'), 'message');
-	}
-}
-
-if($app->input->getCmd('del') === 'big')
-{
-	if(is_file(JPATH_SITE . '/plugins/content/jumultithumb/load/watermark/w.png'))
-	{
-		unlink('w.png');
-		$noticewb = alert(JText::_('PLG_JUMULTITHUMB_NOTICE10'), 'message');
-	}
-	else
-	{
-		$noticewb = alert(JText::_('PLG_JUMULTITHUMB_NOTICE11'), 'notice');
-	}
-}
-elseif($app->input->getCmd('del') === 'small')
-{
-	if(is_file(JPATH_SITE . '/plugins/content/jumultithumb/load/watermark/ws.png'))
-	{
-		unlink('ws.png');
-		$noticews = alert(JText::_('PLG_JUMULTITHUMB_NOTICE10'), 'message');
-	}
-	else
-	{
-		$noticews = alert(JText::_('PLG_JUMULTITHUMB_NOTICE11'), 'notice');
-	}
+    file_put_contents($style, $newCss);
+    $notice = alert(Text::_('PLG_JUMULTITHUMB_NOTICE4') . '<br>' . Text::_('PLG_JUMULTITHUMB_NOTICE5'), 'notice');
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta content="text/html; charset=utf-8" http-equiv="content-type">
-	<?php echo $csslink; ?>
+    <meta charset="utf-8">
+    <?php echo $cssLink; ?>
     <style>
         body {
             background: transparent;
             font-size: 102%;
-            margin: 0 20px 0 20px;
-            padding: 0
+            margin: 0 20px;
         }
-
-        fieldset {
-            margin: 0 0 5px 0 !important;
-        }
-
-        .img {
-            margin: 0;
-            max-width: 300px;
-            padding: 50px;
-            background-color: #818181;
-            background-image: linear-gradient(45deg, #707070 25%, transparent 25%, transparent 74%, #707070 75%, #707070),
-            linear-gradient(45deg, #707070 25%, transparent 25%, transparent 74%, #707070 75%, #707070);
-            background-size: 21px 21px;
-            background-position: 0 0, 11px 11px;
-        }
+        .left { float: left; }
+        .right { float: right; }
     </style>
 </head>
 <body>
-<?php
-if(isset($noticewb))
-{
-	echo $noticewb;
-}
+<?php if (isset($notice)) : ?>
+    <?php echo $notice; ?>
+<?php endif; ?>
 
-if(isset($noticews))
-{
-	echo $noticews;
-}
+<form action="" method="post">
+    <?php echo Text::_('PLG_JUMULTITHUMB_CSS_FRONT'); ?>
+    <button type="submit" class="btn btn-primary right">
+        <i class="icon-apply icon-white"></i>
+        <?php echo Text::_('PLG_JUMULTITHUMB_CSS_SAVE'); ?>
+    </button>
 
-if(isset($uploadsucess))
-{
-	echo $uploadsucess;
-}
-
-if(isset($unknownext))
-{
-	echo $unknownext;
-}
-
-if(isset($limitimg))
-{
-	echo $limitimg;
-}
-
-if(isset($uploadunsuccessfull))
-{
-	echo $uploadunsuccessfull;
-}
-
-if(isset($uploadsucess_s))
-{
-	echo $uploadsucess_s;
-}
-
-if(isset($unknownext_s))
-{
-	echo $unknownext_s;
-}
-
-if(isset($limitimg_s))
-{
-	echo $limitimg_s;
-}
-
-if(isset($uploadunsuccessfull_s))
-{
-	echo $uploadunsuccessfull_s;
-}
-?>
-<fieldset class="adminform" style="clear: both; float: left; width: 48%;">
-    <legend>Watermark for original image</legend>
-
-    <form name="wb" method="post" enctype="multipart/form-data" class="well well-small" action="">
-        <input type="file" name="image"/>
-        <input name="Submit" type="submit" class="btn btn-primary"
-               value="<?php echo JText::_('PLG_JUMULTITHUMB_NOTICE15'); ?>"/>
-        <input type="hidden" name="watermark" value="big"/>
-    </form>
-
-    <form name="wbdel" method="post" action="">
-        <input name="Submit" type="submit" class="btn btn-inverse"
-               value="<?php echo JText::_('PLG_JUMULTITHUMB_NOTICE16'); ?>"/>
-        <input type="hidden" name="del" value="big"/>
-    </form>
-
-    <div style="clear: both; padding-top: 10px;">
-		<?php
-		if(is_file('w.png'))
-		{
-			echo '<img src="w.png?v=' . time() . '" alt="" class="img img-polaroid" />';
-		}
-		else
-		{
-			echo '<a href="https://denysdesign.com" target="_blank" title="Denys Design Studio"><img src="juw.png?v=' . time() . '" alt="" class="img" /></a>';
-		}
-		?>
-    </div>
-</fieldset>
-
-<fieldset class="adminform" style="float: right; width: 48%;">
-    <legend>Watermark for thumbnail image</legend>
-    <form name="ws" method="post" enctype="multipart/form-data" class="well well-small" action="">
-        <input type="file" name="image"/>
-        <input name="Submit" type="submit" class="btn btn-primary"
-               value="<?php echo JText::_('PLG_JUMULTITHUMB_NOTICE15'); ?>"/>
-        <input type="hidden" name="watermark" value="small"/>
-    </form>
-
-    <form name="wbdel" method="post" action="">
-        <input name="Submit" type="submit" class="btn btn-inverse"
-               value="<?php echo JText::_('PLG_JUMULTITHUMB_NOTICE16'); ?>"/>
-        <input type="hidden" name="del" value="small"/>
-    </form>
-
-    <div style="clear: both; padding-top: 10px;">
-		<?php
-		if(is_file('ws.png'))
-		{
-			echo '<img src="ws.png?v=' . time() . '" alt="" class="img img-polaroid" />';
-		}
-		else
-		{
-			echo '<a href="https://joomla-ua.org" target="_blank" title="Joomla! Ukraine"><img src="juws.png?v=' . time() . '" alt="" class="img" /></a>';
-		}
-		?>
-    </div>
-</fieldset>
+    <textarea name="txt" style="width: 100%; height: 585px; clear: both;" id="css_source"><?php echo htmlspecialchars(file_get_contents($style), ENT_QUOTES, 'UTF-8'); ?></textarea>
+</form>
 </body>
 </html>
