@@ -9,138 +9,97 @@
 
 namespace JUMultiThumb\Helpers;
 
-use JUImage;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\FileLayout;
+use Joomla\CMS\Uri\Uri;
 
-\JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
-
-class Image
+class Utils
 {
-	public static function thumb(array $options = []): string
-	{
-		$juImg = new JUImage();
+    public static function img_source(string $src): string
+    {
+        return ltrim(str_replace(Uri::base(), '', $src), '/');
+    }
 
-		$aspect = '0';
-		if($options[ 'zc' ] == 1 && isset($options[ 'cropaspect' ]))
-		{
-			$aspect = self::aspect($options[ 'image' ], $options[ 'cropaspect' ]);
-		}
+    public static function img_alt(string $alt): string
+    {
+        $alt = (string) $alt;
 
-		if($aspect >= 1 && $options[ 'zc' ] == 4)
-		{
-			$options[ 'zc' ] = 'T';
-		}
+        return mb_strtoupper(mb_substr($alt, 0, 1)) . mb_substr($alt, 1);
+    }
 
-		if($aspect >= 1 && $options[ 'zc' ] == 2)
-		{
-			$new_imgparams = [
-				'far' => '1',
-				'bg'  => str_replace('#', '', $options[ 'zoom_crop_bg' ])
-			];
-		}
-		else
-		{
-			$new_imgparams = [
-				'zc' => $options[ 'zc' ]
-			];
-		}
+    public static function img_class(array $options = []): string
+    {
+        $imgClass = '';
+        $view = $options['view'] ?? '';
 
-		if($options[ 'zc' ] == 3)
-		{
-			$new_imgparams = [
-				'far' => $options[ 'far_crop' ],
-				'bg'  => str_replace('#', '', $options[ 'zoom_crop_bg' ])
-			];
-		}
+        if (!empty($options['imgalign']))
+        {
+            $imgClass = 'ju' . trim((string) $options['imgalign']) . ' ';
+        }
+        elseif (!empty($options['imgstyle']))
+        {
+            $imgClass = 'ju' . trim((string) $options['imgstyle']) . ' ';
+        }
 
-		/*$usm_filtercolor = [];
-		if($options[ 'typo' ]->get('filters') == 1 && $options[ 'typo' ]->get('unsharp') == 1)
-		{
-			$usm_filtercolor = [
-				'fltr_2' => 'usm|' . $options[ 'typo' ]->get('amount') . '|' . $options[ 'typo' ]->get('radius') . '|' . $options[ 'typo' ]->get('threshold')
-			];
-		}*/
+        return 'juimage ' . ($options['imgclass'] ?? '') . ' ' . $imgClass . 'juimg-' . $view;
+    }
 
-		/*$blur_filtercolor = [];
-		if($options[ 'typo' ]->get('filters') == 1 && $options[ 'typo' ]->get('blur'))
-		{
-			$blur_filtercolor = [
-				'fltr_3' => 'blur|' . $options[ 'typo' ]->get('blur')
-			];
-		}
+    public static function image(string $plugin, string $name, array $options = []): string
+    {
+        $link = $options['link_img'] ?? '';
+        $origImg = $options['orig_img'] ?? '';
+        $linkImg = $options['link_img'] ?? '';
+        $lightbox = '';
+        $lightboxData = '';
 
-		$brit_filtercolor = [];
-		if($options[ 'typo' ]->get('filters') == 1 && $options[ 'typo' ]->get('brit'))
-		{
-			$brit_filtercolor = [
-				'fltr_4' => 'brit|' . $options[ 'typo' ]->get('brit')
-			];
-		}
+        switch ($options['lightbox'] ?? 'jmodal')
+        {
+            case 'lightgallery':
+                $link = '#';
+                $lightbox = ' ';
+                $lightboxData = ' ' . ($linkImg ? 'data-src="' . Uri::base() . $linkImg . '"' : '') . ' ' . ($origImg ? 'data-download-url="' . Uri::base() . $origImg . '"' : '');
+                break;
 
-		$cont_filtercolor = [];
-		if($options[ 'typo' ]->get('filters') == 1 && $options[ 'typo' ]->get('cont'))
-		{
-			$cont_filtercolor = [
-				'fltr_5' => 'cont|' . $options[ 'typo' ]->get('cont')
-			];
-		}
-*/
-		/*$img_format = [];
-		if($options[ 'typo' ]->get('img_format'))
-		{
-			$img_format = [
-				'f' => $options[ 'typo' ]->get('img_format')
-			];
-		}*/
+            case 'colorbox':
+                $link = $linkImg;
+                $lightbox = ' class="lightbox" rel="lightbox[gall]"';
+                break;
 
-		$imgparams = [
-			'w'     => $options[ 'w' ],
-			'h'     => $options[ 'h' ],
-			'q'     => $options[ 'q' ],
-			'cache' => 'img'
-		];
+            default:
+            case 'jmodal':
+                $link = $linkImg;
+                $lightbox = ' rel="{handler: \'image\', marginImage: {x: 50, y: 50}}"';
+                break;
+        }
 
-		$blur_bg = [];
-		if($aspect >= 0.98 && $options[ 'zc' ] == 5)
-		{
-			$_imgsource = $juImg->render($options[ 'image' ], [
-				'h'     => $options[ 'h' ],
-				'cache' => 'img'
-			]);
-			$_imgsource = JPATH_BASE . '/' . $_imgsource;
+        return Utils::tmpl($plugin, $name, [
+            'img'            => $options['image'] ?? '',
+            'w'              => $options['w'] ?? '',
+            'h'              => $options['h'] ?? '',
+            'class'          => $options['class'] ?? '',
+            'alt'            => $options['alt'] ?? '',
+            'caption'        => $options['caption'] ?? '',
+            'title'          => $options['title'] ?? '',
+            'link_img'       => $linkImg,
+            'orig_img'       => $origImg,
+            'link'           => $link,
+            'lightbox'       => $lightbox,
+            'lightbox_data ' => $lightboxData,
+        ]);
+    }
 
-			$blur_bg = [
-				'blur_bg'  => 100,
-				'fltr_100' => 'wmi|' . $_imgsource . '|C|100',
-			];
-		}
+    public static function tmpl(string $plugin, string $name, array $variables = []): string
+    {
+        $template = Factory::getApplication()->getTemplate();
+        $override = JPATH_SITE . '/templates/' . $template . '/html/' . $plugin . '/';
+        $tmpl = JPATH_SITE . '/plugins/content/' . $plugin . '/tmpl/';
+        $filename = $override . $name . '.php';
 
-		$_imgparams = array_merge($imgparams, $new_imgparams, $blur_bg); // $usm_filtercolor, $blur_filtercolor, $brit_filtercolor, $cont_filtercolor, $img_format,
-		$thumb      = $juImg->render($options[ 'image' ], $_imgparams);
+        if (is_file($filename))
+        {
+            return (new FileLayout($name, $override))->render($variables);
+        }
 
-		/*if($aspect >= 0.98 && $options[ 'zc' ] == 5 && is_file($_imgsource))
-		{
-			unlink($_imgsource);
-		}*/
-
-		return $thumb;
-	}
-
-	/**
-	 * @param   string  $html
-	 * @param   float   $_cropaspect
-	 *
-	 * @return float|int
-	 *
-	 * @since 7.0
-	 */
-	private static function aspect(string $html, float $_cropaspect)
-	{
-		$juImg = new JUImage();
-
-		$size   = $juImg->size(rawurldecode(JPATH_SITE . '/' . $html));
-		$width  = $size->width;
-		$height = ($size->height * ($_cropaspect !== '' ? $_cropaspect : '0'));
-
-		return $height / $width;
-	}
+        return (new FileLayout($name, $tmpl))->render($variables);
+    }
 }
