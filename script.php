@@ -7,6 +7,8 @@
  *
  * @author           Denys Nosov, denys@joomla-ua.org
  * @copyright        2007-2023 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
+ * @copyright        2026 (C) WEBUS Studio, https://webus-studio.com. All rights reserved.
+ * @contributor      AI-assisted adaptation and maintenance by WEBUS Studio for Joomla 5/6 compatibility.
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -47,7 +49,7 @@ if ($plugin && !empty($plugin->params))
 
     if ($galleryFolder !== '')
     {
-        $rootfolder = 'images/' . trim($galleryFolder, '/\') . '/';
+        $rootfolder = 'images/' . trim($galleryFolder, '/\\') . '/';
     }
 }
 ?>
