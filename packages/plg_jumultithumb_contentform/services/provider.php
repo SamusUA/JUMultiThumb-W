@@ -24,6 +24,8 @@ return new class () implements ServiceProviderInterface {
                 $dispatcher = $container->get(DispatcherInterface::class);
                 $config     = (array) PluginHelper::getPlugin('content', 'jumultithumb_contentform');
 
+                require_once dirname(__DIR__) . '/jumultithumb_contentform.php';
+
                 $plugin = new \plgContentJUMultithumb_ContentForm($dispatcher, $config);
                 $plugin->setApplication(Factory::getApplication());
 
