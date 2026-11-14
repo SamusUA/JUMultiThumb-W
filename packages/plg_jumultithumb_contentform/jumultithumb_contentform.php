@@ -7,12 +7,15 @@
  *
  * @author           Denys Nosov, denys@joomla-ua.org
  * @copyright        2007-2023 (C) Joomla! Ukraine, https://joomla-ua.org. All rights reserved.
+ * @copyright        2026 (C) WEBUS Studio, https://webus-studio.com. All rights reserved.
+ * @contributor      AI-assisted adaptation and maintenance by WEBUS Studio for Joomla 5/6 compatibility.
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Plugin\CMSPlugin;
 
-defined('JPATH_BASE') or die;
+defined('_JEXEC') or die;
 
 class plgContentJUMultithumb_ContentForm extends CMSPlugin
 {
@@ -39,19 +42,17 @@ class plgContentJUMultithumb_ContentForm extends CMSPlugin
 	 */
 	public function onContentPrepareForm($form, $data): void
 	{
-		if(!($form instanceof JForm))
-		{
-			$this->_subject->setError('JERROR_NOT_A_FORM');
-
-			return;
-		}
-
-		if($form->getName() !== 'com_content.article')
+		if (!($form instanceof Form))
 		{
 			return;
 		}
 
-		JForm::addFormPath(__DIR__ . '/forms');
+		if ($form->getName() !== 'com_content.article')
+		{
+			return;
+		}
+
+		Form::addFormPath(__DIR__ . '/forms');
 
 		$form->loadFile('article', false);
 	}
