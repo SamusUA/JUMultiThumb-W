@@ -15,6 +15,7 @@
     <description>JUMultiThumb Content Form</description>
 
     <files>
+        <folder>services</folder>
         <folder>forms</folder>
         <filename plugin="jumultithumb_contentform">jumultithumb_contentform.php</filename>
     </files>
