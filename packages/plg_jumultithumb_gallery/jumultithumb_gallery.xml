@@ -15,6 +15,7 @@
     <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
 
     <files>
+        <folder>services</folder>
         <filename plugin="jumultithumb_gallery">jumultithumb_gallery.php</filename>
         <folder>tmpl</folder>
     </files>
