@@ -13,13 +13,15 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
+defined('_JEXEC') or die;
+
 class Pkg_JUMultiThumbInstallerScript
 {
-	protected $dbSupport = ['mysql', 'mysqli', 'postgresql', 'sqlsrv', 'sqlazure'];
+	protected $dbSupport = ['mysql', 'mysqli', 'postgresql', 'sqlsrv', 'sqlazure', 'pgsql'];
 	protected $message;
 	protected $status;
 
-	public function preflight()
+	public function preflight($type = null, $parent = null)
 	{
 		if(version_compare(JVERSION, '5.0', 'lt'))
 		{
@@ -30,7 +32,10 @@ class Pkg_JUMultiThumbInstallerScript
 		$lang = Factory::getLanguage();
 		$lang->load('plg_content_jumultithumb', JPATH_ADMINISTRATOR);
 
-		if(!in_array(Factory::getDbo()->name, $this->dbSupport, true))
+		$db = Factory::getDbo();
+		$dbName = method_exists($db, 'getName') ? $db->getName() : ($db->name ?? 'mysql');
+
+		if(!in_array(strtolower($dbName), $this->dbSupport, true))
 		{
 			Factory::getApplication()->enqueueMessage(Text::_('PLG_JUMULTITHUMB_ERROR_DB_SUPPORT'), 'error');
 			return false;
@@ -64,7 +69,7 @@ class Pkg_JUMultiThumbInstallerScript
 		return mkdir($dir, 0777, true);
 	}
 
-	public function postflight()
+	public function postflight($type = null, $parent = null)
 	{
 		$db = Factory::getDbo();
 
