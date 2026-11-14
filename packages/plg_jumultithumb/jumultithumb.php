@@ -26,7 +26,7 @@ require_once __DIR__ . '/libraries/vendor/autoload.php';
 
 if (!class_exists('JUImage'))
 {
-    \JLoader::register('JUImage', JPATH_LIBRARIES . '/juimage/JUImage.php');
+    if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.php')) { require_once JPATH_LIBRARIES . '/juimage/JUImage.php'; }
 }
 
 class plgContentjumultithumb extends CMSPlugin
