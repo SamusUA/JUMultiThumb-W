@@ -12,9 +12,9 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
+if (!defined('_JEXEC')) { define('_JEXEC', 1); }
 
-define('JPATH_BASE', dirname(__DIR__, 4));
+if (!defined('JPATH_BASE')) { define('JPATH_BASE', realpath(__DIR__ . '/../../../../..') ?: dirname(__DIR__, 5)); }
 require_once JPATH_BASE . '/includes/defines.php';
 require_once JPATH_BASE . '/includes/framework.php';
 
