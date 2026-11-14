@@ -24,6 +24,8 @@ return new class () implements ServiceProviderInterface {
                 $dispatcher = $container->get(DispatcherInterface::class);
                 $config     = (array) PluginHelper::getPlugin('editors-xtd', 'jumultithumb_editorbutton');
 
+                require_once dirname(__DIR__) . '/jumultithumb_editorbutton.php';
+
                 $plugin = new \plgButtonJUmultithumb_EditorButton($dispatcher, $config);
                 $plugin->setApplication(Factory::getApplication());
 
