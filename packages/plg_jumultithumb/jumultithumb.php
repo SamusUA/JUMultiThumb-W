@@ -32,7 +32,7 @@ if (!class_exists('JUImage'))
 class plgContentjumultithumb extends CMSPlugin
 {
     protected $modeHelper;
-    protected JUImage $juimg;
+    protected $juimg;
     protected $app;
     protected ?Document $doc;
     protected $option;
@@ -44,7 +44,7 @@ class plgContentjumultithumb extends CMSPlugin
 
         $this->loadLanguage();
 
-        $this->juimg = new JUImage();
+        if (class_exists('JUImage')) { $this->juimg = new JUImage(); }
         $this->app = Factory::getApplication();
         $this->doc = Factory::getDocument();
         $this->option = $this->app->input->get('option');
