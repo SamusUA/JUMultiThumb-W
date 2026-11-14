@@ -25,6 +25,12 @@ if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.
 
 class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 {
+	protected $modeHelper;
+	protected $juimg;
+	protected $app;
+	protected $doc;
+	protected $option;
+	protected $itemid;
 	/**
 	 * plgContentJUMULTITHUMB_Gallery constructor.
 	 *
@@ -39,7 +45,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 		parent::__construct($subject, $config);
 		$this->loadLanguage();
 
-		$this->juimg      = new JUImage();
+		if (class_exists('JUImage')) { $this->juimg = new JUImage(); }
 		$this->app        = Factory::getApplication();
 		$this->doc        = Factory::getDocument();
 		$this->option     = $this->app->input->get('option');
