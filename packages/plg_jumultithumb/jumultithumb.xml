@@ -15,6 +15,7 @@
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
+        <folder>services</folder>
         <filename plugin="jumultithumb">jumultithumb.php</filename>
         <folder>adapters</folder>
         <folder>assets</folder>
