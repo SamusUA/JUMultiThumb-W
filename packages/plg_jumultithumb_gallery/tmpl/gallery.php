@@ -22,10 +22,10 @@ defined('_JEXEC') or die;
 $data = (object) $displayData;
 
 ?>
-<div class="juphotogallery<?php echo(isset($data->gallstyle) ? ' ' . $data->gallstyle : ''); ?>">
+<div class="juphotogallery<?php echo(isset($data->gallstyle) ? ' ' . htmlspecialchars($data->gallstyle, ENT_QUOTES, 'UTF-8') : ''); ?>">
 	<?php if($data->galltitle !== '') : ?>
 		<h3 class="jutitlegallery">
-			<?php echo $data->galltitle; ?>
+			<?php echo htmlspecialchars($data->galltitle, ENT_QUOTES, 'UTF-8'); ?>
 		</h3>
 	<?php endif; ?>
 

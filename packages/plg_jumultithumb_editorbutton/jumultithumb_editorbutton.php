@@ -35,8 +35,8 @@ class plgButtonJUmultithumb_EditorButton extends CMSPlugin
 	{
 		$user             = Factory::getUser();
 		$canCreateRecords = $user->authorise('core.create', 'com_content') || count($user->getAuthorisedCategories('com_content', 'core.create')) > 0;
-		$values           = (array) Factory::getApplication()->getUserState('com_content.edit.article.id');
-		$isEditingRecords = count($values);
+		$articleId        = (int) Factory::getApplication()->getUserState('com_content.edit.article.id');
+		$isEditingRecords = $articleId > 0 && $user->authorise('core.edit', 'com_content.article.' . $articleId);
 		$hasAccess        = $canCreateRecords || $isEditingRecords;
 
 		if(!$hasAccess)
@@ -44,7 +44,7 @@ class plgButtonJUmultithumb_EditorButton extends CMSPlugin
 			return;
 		}
 
-		$link            = '../plugins/editors-xtd/jumultithumb_editorbutton/form.php';
+		$link            = '../plugins/editors-xtd/jumultithumb_editorbutton/form.php?editor=' . rawurlencode((string) $name);
 		$button          = new CMSObject();
 		$button->modal   = true;
 		$button->link    = $link;

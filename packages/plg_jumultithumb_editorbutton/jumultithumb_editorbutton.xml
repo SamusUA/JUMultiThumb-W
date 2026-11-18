@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.5-alpha</version>
+    <version>6.0.6-alpha</version>
     <description>PLG_EDITORS_XTD_JUMULTITHUMB_EDITORBUTTON_DESC</description>
     <files>
         <folder>services</folder>

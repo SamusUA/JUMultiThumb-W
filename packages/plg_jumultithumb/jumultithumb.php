@@ -83,12 +83,27 @@ class plgContentjumultithumb extends CMSPlugin
             return;
         }
 
-        if (isset($article->text))
+        $introText = isset($article->introtext) && is_string($article->introtext) ? $article->introtext : null;
+        $text = isset($article->text) && is_string($article->text) ? $article->text : null;
+        $processedIntroText = null;
+
+        if ($introText !== null)
         {
-            $article->text = @$this->ImgReplace([
-                'text' => $article->text,
+            $processedIntroText = @$this->ImgReplace([
+                'text' => $introText,
                 'article' => $article,
             ]);
+            $article->introtext = $processedIntroText;
+        }
+
+        if ($text !== null)
+        {
+            $article->text = $introText !== null && $text === $introText
+                ? $processedIntroText
+                : @$this->ImgReplace([
+                    'text' => $text,
+                    'article' => $article,
+                ]);
         }
 
         if (isset($article->fulltext))
@@ -106,6 +121,24 @@ class plgContentjumultithumb extends CMSPlugin
                 'article' => $article,
                 'use_wm' => $useWm,
             ]);
+        }
+
+        $articleImages = $article->images ?? new \stdClass();
+        if (is_string($articleImages))
+        {
+            $articleImages = json_decode($articleImages) ?: new \stdClass();
+        }
+        elseif (!is_object($articleImages))
+        {
+            $articleImages = new \stdClass();
+        }
+
+        $lightboxMode = (string) $this->params->get('selectlightbox', 'photoswipe');
+        if ($this->params->get('uselightbox', '1') == 1
+            && in_array($lightboxMode, ['photoswipe', 'lightgallery'], true)
+            && (!empty($articleImages->image_intro) || !empty($articleImages->image_fulltext)))
+        {
+            Utils::loadPhotoSwipe();
         }
     }
 
@@ -275,16 +308,16 @@ class plgContentjumultithumb extends CMSPlugin
         $imgtitle = mb_strtoupper(mb_substr($imgtitle, 0, 1)) . mb_substr($imgtitle, 1);
         $title = ($imgAlt ?: $imgtitle);
         $title = ($title ?: ($option['article']->title ?? ''));
-        $title = ($title ? ' title="' . $title . '"' : '');
 
         if ($this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage')
         {
             $size = getimagesize(JPATH_SITE . '/' . $imgsource);
+            $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality);
 
             return Utils::image('jumultithumb', 'default', [
                 'image' => $imgsource,
                 'orig_img' => $imgsource,
-                'link_img' => $imgsource,
+                'link_img' => $linkImage,
                 'w' => $size[0],
                 'h' => $size[1],
                 'title' => $title,
@@ -315,11 +348,12 @@ class plgContentjumultithumb extends CMSPlugin
             'farcropbg' => $farcropbg,
             'q' => $quality,
         ]);
+        $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality);
 
         return Utils::image('jumultithumb', 'default', [
             'image' => $thumbImg,
             'orig_img' => $imgsource,
-            'link_img' => $imgsource,
+            'link_img' => $linkImage,
             'w' => $w,
             'h' => $h,
             'title' => $title,
@@ -337,16 +371,16 @@ class plgContentjumultithumb extends CMSPlugin
 
         if ($this->params->get('uselightbox', '1') == 1 && (($this->modeHelper::view('Article')) || ($this->modeHelper::view('Categories')) || ($this->modeHelper::view('CatBlog'))) && !($this->modeHelper::view('Print')))
         {
-            if ($this->params->get('jujq') == 0)
-            {
-                HTMLHelper::_('jquery.framework');
-            }
-
             $juhead = '';
 
             switch ($this->params->get('selectlightbox'))
             {
                 case 'customjs':
+                    if ($this->params->get('jujq') == 0)
+                    {
+                        HTMLHelper::_('jquery.framework');
+                    }
+
                     $juhead .= "\r";
                     if ($this->params->get('customjsparam'))
                     {
@@ -354,9 +388,9 @@ class plgContentjumultithumb extends CMSPlugin
                     }
                     break;
 
+                case 'photoswipe':
+                case 'lightgallery':
                 default:
-                case 'jmodal':
-                    HTMLHelper::_('bootstrap.renderModal');
                     break;
             }
 

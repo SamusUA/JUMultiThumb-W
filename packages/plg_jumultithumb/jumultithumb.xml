@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.5-alpha</version>
+    <version>6.0.6-alpha</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -389,11 +389,12 @@
 
                 <field name="selectlightbox"
                        type="list"
-                       default="lightgallery"
+                       default="photoswipe"
                        label="PLG_JUMULTITHUMB_SELECT_LIGHTBOX"
                        showon="uselightbox:1"
                 >
-                    <option value="lightgallery">LightGallery</option>
+                    <option value="photoswipe">PhotoSwipe 5</option>
+                    <option value="lightgallery">LightGallery (PhotoSwipe compatibility)</option>
                     <option value="customjs">PLG_JUMULTITHUMB_CUSTOM_JS</option>
                 </field>
 
@@ -402,7 +403,7 @@
                        layout="joomla.form.field.radio.switcher"
                        default="0"
                        label="PLG_JUMULTITHUMB_JQUERY"
-                       showon="uselightbox:1"
+                       showon="uselightbox:1[AND]selectlightbox:customjs"
                 >
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>

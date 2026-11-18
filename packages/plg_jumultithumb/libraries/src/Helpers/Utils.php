@@ -89,6 +89,29 @@ class Utils
 		return $isWithinSite ? $relativePath : '';
 	}
 
+	public static function siteUrl(string $path): string
+	{
+		$path = trim($path);
+
+		if($path === '' || preg_match('#^(?:[a-z][a-z0-9+.-]*:|//)#i', $path))
+		{
+			return $path;
+		}
+
+		return rtrim(Uri::root(true), '/') . '/' . ltrim($path, '/');
+	}
+
+	public static function largeImage(string $image, int $quality = 85): string
+	{
+		return Image::thumb([
+			'image' => $image,
+			'zc' => 0,
+			'w' => 1200,
+			'h' => 900,
+			'q' => $quality,
+		]);
+	}
+
 	public static function img_alt(string $alt): string
 	{
 		return mb_strtoupper(mb_substr($alt, 0, 1)) . mb_substr($alt, 1);
@@ -111,42 +134,93 @@ class Utils
 
 	public static function image(string $plugin, string $name, array $options = []): string
 	{
-		switch($options[ 'lightbox' ])
+		$lightboxMode = (string) ($options['lightbox'] ?? '');
+		$linkImage = (string) ($options['link_img'] ?? '');
+		$originalImage = (string) ($options['orig_img'] ?? '');
+		$lightbox = '';
+		$lightboxData = '';
+		$pswpData = '';
+		$link = self::siteUrl($linkImage);
+
+		if(in_array($lightboxMode, ['photoswipe', 'lightgallery'], true) && $linkImage !== '')
 		{
-			case 'lightgallery':
-				$link          = '#';
-				$lightbox      = ' ';
-				$lightbox_data = ' ' . ($options[ 'link_img' ] ? 'data-src="' . Uri::base() . $options[ 'link_img' ] . '"' : '') . ' ' . ($options[ 'orig_img' ] ? 'data-download-url="' . Uri::base() . $options[ 'orig_img' ] . '"' : '');
-				break;
+			[$width, $height] = self::imageDimensions($linkImage, $originalImage);
 
-			case 'colorbox':
-				$link          = $options[ 'link_img' ];
-				$lightbox      = ' class="lightbox" rel="lightbox[gall]"';
-				$lightbox_data = '';
-				break;
+			if($width > 0 && $height > 0)
+			{
+				self::loadPhotoSwipe();
 
-			default:
-			case 'jmodal':
-				$link          = $options[ 'link_img' ];
-				$lightbox      = ' rel="{handler: \'image\', marginImage: {x: 50, y: 50}}"';
-				$lightbox_data = '';
-				break;
+				$pswpData = ' data-pswp-width="' . $width . '" data-pswp-height="' . $height . '"';
+				$group = (string) ($options['pswp_gallery'] ?? 'jumultithumb-inline');
+
+				if($group !== '')
+				{
+					$pswpData .= ' data-pswp-gallery="' . htmlspecialchars($group, ENT_QUOTES, 'UTF-8') . '"';
+				}
+			}
+		}
+		elseif($lightboxMode === 'colorbox')
+		{
+			$lightbox = ' class="lightbox" rel="lightbox[gall]"';
+		}
+		else
+		{
+			$lightbox = ' rel="{handler: \'image\', marginImage: {x: 50, y: 50}}"';
 		}
 
 		return Utils::tmpl($plugin, $name, [
-			'img'            => $options[ 'image' ],
-			'w'              => $options[ 'w' ],
-			'h'              => $options[ 'h' ],
-			'class'          => $options[ 'class' ],
-			'alt'            => $options[ 'alt' ],
-			'caption'        => $options[ 'caption' ],
-			'title'          => $options[ 'title' ],
-			'link_img'       => $options[ 'link_img' ],
-			'orig_img'       => $options[ 'orig_img' ],
+			'img'            => self::siteUrl((string) ($options['image'] ?? '')),
+			'w'              => $options['w'] ?? 0,
+			'h'              => $options['h'] ?? 0,
+			'class'          => $options['class'] ?? '',
+			'alt'            => $options['alt'] ?? '',
+			'caption'        => $options['caption'] ?? '',
+			'title'          => $options['title'] ?? '',
+			'link_img'       => self::siteUrl($linkImage),
+			'orig_img'       => self::siteUrl($originalImage),
 			'link'           => $link,
 			'lightbox'       => $lightbox,
-			'lightbox_data ' => $lightbox_data
+			'lightbox_data'  => $lightboxData,
+			'pswp_data'      => $pswpData,
 		]);
+	}
+
+	private static function imageDimensions(string $image, string $fallback = ''): array
+	{
+		foreach([$image, $fallback] as $candidate)
+		{
+			$relativePath = self::img_source($candidate);
+
+			if($relativePath === '' || is_string(parse_url($relativePath, PHP_URL_SCHEME)))
+			{
+				continue;
+			}
+
+			$path = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+
+			if(!is_file($path))
+			{
+				continue;
+			}
+
+			$dimensions = getimagesize($path);
+
+			if($dimensions !== false)
+			{
+				return [(int) $dimensions[0], (int) $dimensions[1]];
+			}
+		}
+
+		return [0, 0];
+	}
+
+	public static function loadPhotoSwipe(): void
+	{
+		$document = Factory::getDocument();
+		$assetBase = rtrim(Uri::root(true), '/') . '/plugins/content/jumultithumb/assets/photoswipe/';
+
+		$document->addStyleSheet($assetBase . 'photoswipe.css');
+		$document->addScript($assetBase . 'photoswipe-init.js', [], ['type' => 'module']);
 	}
 
 	/**

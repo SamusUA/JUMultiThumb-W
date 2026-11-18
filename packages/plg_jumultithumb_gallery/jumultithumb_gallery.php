@@ -11,9 +11,11 @@
  */
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Plugin\PluginHelper;
 use JUMultiThumb\Helpers\AutoLinks;
+use JUMultiThumb\Helpers\GalleryPath;
 use JUMultiThumb\Helpers\Image;
 use JUMultiThumb\Helpers\Utils;
 
@@ -121,12 +123,12 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 
 		if(isset($article->text))
 		{
-			$article->text = @$this->GalleryReplace($article->text, $article);
+			$article->text = $this->GalleryReplace($article->text, $article);
 		}
 
 		if(isset($article->fulltext))
 		{
-			$article->fulltext = @$this->GalleryReplace($article->fulltext, $article);
+			$article->fulltext = $this->GalleryReplace($article->fulltext, $article);
 		}
 	}
 
@@ -146,9 +148,8 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 
 		if($matches)
 		{
-			$plugin = PluginHelper::getPlugin('content', 'jumultithumb');
-			$json   = json_decode($plugin->params);
-
+			$plugin = PluginHelper::getPlugin('content', 'jumultithumb') ?: (object) ['params' => '{}'];
+			$json = json_decode((string) $plugin->params) ?: new \stdClass();
 			foreach($matches as $match)
 			{
 				$matcheslist = explode('|', $match[ 1 ]);
@@ -187,23 +188,22 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 					$gallstyle = $this->params->get('cssclass');
 				}
 
-				$img_title  = preg_replace('/"/', "'", $article->title);
-				$lightbox   = $this->params->get('selectlightbox');
-				$folder     = trim($matcheslist[ 0 ]);
-				$imgpath    = 'images/' . $folder;
-				$root       = JPATH_ROOT . '/';
-				$img_folder = $root . $imgpath;
+				$img_title = preg_replace('/"/', "'", $article->title);
+				$folder = trim($matcheslist[0] ?? '');
+				$img_folder = GalleryPath::resolve($folder, JPATH_SITE . '/images');
+				$siteRoot = realpath(JPATH_SITE);
 
 				$html = '';
-				if(is_dir($img_folder))
+				if($img_folder !== null && $siteRoot !== false)
 				{
-					$images = glob($img_folder . '/{*.[jJ][pP][gG],*.[jJ][pP][eE][gG],*.[gG][iI][fF],*.[pP][nN][gG],*.[bB][mM][pP],*.[tT][iI][fF],*.[tT][iI][fF][fF]}', GLOB_BRACE);
-					$images = str_replace($root, '', $images);
+					$images = glob($img_folder . DIRECTORY_SEPARATOR . '{*.[jJ][pP][gG],*.[jJ][pP][eE][gG],*.[gG][iI][fF],*.[pP][nN][gG],*.[bB][mM][pP],*.[tT][iI][fF],*.[tT][iI][fF][fF]}', GLOB_BRACE) ?: [];
 
 					$_gallery = [];
-					foreach($images as $file)
+					foreach($images as $imagePath)
 					{
-						switch($json->thumb_filtercolor)
+						$file = ltrim(str_replace('\\', '/', substr($imagePath, strlen($siteRoot))), '/');
+
+						switch($json->thumb_filtercolor ?? '0')
 						{
 							case '1':
 								$imp_filtercolor = [ 'fltr_1' => 'gray' ];
@@ -212,10 +212,10 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								$imp_filtercolor = [ 'fltr_1' => 'sep' ];
 								break;
 							case '3':
-								$imp_filtercolor = [ 'fltr_1' => 'th|' . $json->thumb_th_seting ];
+								$imp_filtercolor = [ 'fltr_1' => 'th|' . ($json->thumb_th_seting ?? 0) ];
 								break;
 							case '4':
-								$imp_filtercolor = [ 'fltr_1' => 'clr|' . $json->colorized . '|' . str_replace('#', '', $json->colorpicker) ];
+								$imp_filtercolor = [ 'fltr_1' => 'clr|' . ($json->colorized ?? 25) . '|' . str_replace('#', '', $json->colorpicker ?? '#0000ff') ];
 								break;
 							default:
 								$imp_filtercolor = [];
@@ -223,32 +223,33 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 						}
 
 						$usm_filtercolor = [];
-						if($json->thumb_unsharp == 1)
+						if(($json->thumb_unsharp ?? 0) == 1)
 						{
-							$usm_filtercolor = [ 'fltr_2' => 'usm|' . $json->thumb_unsharp_amount . '|' . $json->thumb_unsharp_radius . '|' . $json->thumb_unsharp_threshold ];
+							$usm_filtercolor = [ 'fltr_2' => 'usm|' . ($json->thumb_unsharp_amount ?? 80) . '|' . ($json->thumb_unsharp_radius ?? 1) . '|' . ($json->thumb_unsharp_threshold ?? 3) ];
 						}
 
 						$blur_filtercolor = [];
-						if($json->thumb_blur == 1)
+						if(($json->thumb_blur ?? 0) == 1)
 						{
-							$blur_filtercolor = [ 'fltr_3' => 'blur|' . $json->thumb_blur_seting ];
+							$blur_filtercolor = [ 'fltr_3' => 'blur|' . ($json->thumb_blur_seting ?? 1) ];
 						}
 
 						$brit_filtercolor = [];
-						if($json->thumb_brit == 1)
+						if(($json->thumb_brit ?? 0) == 1)
 						{
-							$brit_filtercolor = [ 'fltr_4' => 'brit|' . $json->thumb_brit_seting ];
+							$brit_filtercolor = [ 'fltr_4' => 'brit|' . ($json->thumb_brit_seting ?? 50) ];
 						}
 
 						$cont_filtercolor = [];
-						if($json->thumb_cont == 1)
+						if(($json->thumb_cont ?? 0) == 1)
 						{
-							$cont_filtercolor = [ 'fltr_5' => 'cont|' . $json->thumb_cont_seting ];
+							$cont_filtercolor = [ 'fltr_5' => 'cont|' . ($json->thumb_cont_seting ?? 50) ];
 						}
 
 						if(!$this->modeHelper::view('Article') && ($this->params->get('useimgagegallery') == '1'))
 						{
 							$_title = mb_strtoupper(mb_substr($img_title, 0, 1)) . mb_substr($img_title, 1);
+							$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85));
 
 							//$_imgparams = array_merge($imp_filtercolor, $usm_filtercolor, $blur_filtercolor, $brit_filtercolor, $cont_filtercolor);
 
@@ -257,17 +258,19 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								'zc'    => $this->params->get('cropzoom'),
 								'w'     => $this->params->get('width'),
 								'h'     => $this->params->get('height'),
-								'q'     => $json->quality,
+								'q'     => $json->quality ?? 85,
 							]);
 
 							return Utils::image('jumultithumb_gallery', 'image', [
 								'image'    => $thumb_img,
 								'orig_img' => $file,
-								'link_img' => $file,
+								'link_img' => $largeImage,
 								'w'        => $this->params->get('width'),
 								'h'        => $this->params->get('height'),
 								'title'    => $_title,
-								'caption'  => $_title
+								'caption'  => $_title,
+								'lightbox' => 'photoswipe',
+								'pswp_gallery' => '',
 							]);
 						}
 
@@ -276,12 +279,13 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 							'zc'    => $gallcropzoom,
 							'w'     => $gallwidth,
 							'h'     => $gallheight,
-							'q'     => $json->quality,
+							'q'     => $json->quality ?? 85,
 						];
 
 						$options = array_merge($imp_filtercolor, $usm_filtercolor, $blur_filtercolor, $brit_filtercolor, $cont_filtercolor, $imgparams);
 
 						$thumb_img = Image::thumb($options);
+						$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85));
 
 						$_title = ($galltitle == '' ? $img_title : $galltitle . '. ' . $img_title);
 						$_title = mb_strtoupper(mb_substr($_title, 0, 1)) . mb_substr($_title, 1);
@@ -289,12 +293,13 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 						$_gallery[] = Utils::image('jumultithumb_gallery', 'image', [
 							'image'    => $thumb_img,
 							'orig_img' => $file,
-							'link_img' => $file,
+							'link_img' => $largeImage,
 							'w'        => $gallwidth,
 							'h'        => $gallheight,
 							'title'    => $_title,
 							'caption'  => $_title,
-							'lightbox' => $lightbox
+							'lightbox' => 'photoswipe',
+							'pswp_gallery' => '',
 						]);
 					}
 
@@ -305,6 +310,10 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 						'gallstyle' => $gallstyle,
 						'galltitle' => $galltitle
 					]);
+				}
+				elseif($folder !== '')
+				{
+					Log::add('Gallery folder not found or outside /images: ' . $folder, Log::WARNING, 'plg_content_jumultithumb_gallery');
 				}
 
 				$text = preg_replace($regex, $html, $text, 1);

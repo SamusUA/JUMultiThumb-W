@@ -56,13 +56,7 @@ if (Test-Path (Join-Path $root "language")) {
     Copy-Item -Path (Join-Path $root "language") -Destination (Join-Path $pkgDir "language") -Recurse -Force
 }
 
-$finalPkgZip = Join-Path $distDir "pkg_jumultithumb_v6.0.5-alpha.zip"
+$finalPkgZip = Join-Path $distDir "pkg_jumultithumb_v6.0.6-alpha.zip"
 New-StandardZip $pkgDir $finalPkgZip
 
-# Also copy final package to artifact directory
-$artifactDir = 'C:\Users\Svyatoslav\.gemini\antigravity\brain\c0cc74cb-a6bf-4108-a7e7-5d06e89d0e19'
-$artifactDest = Join-Path $artifactDir "pkg_jumultithumb_v6.0.5-alpha.zip"
-Copy-Item -Path $finalPkgZip -Destination $artifactDest -Force
-
 Write-Output "Created: $finalPkgZip ($((Get-Item $finalPkgZip).Length) bytes)"
-Write-Output "Copied to artifact: $artifactDest ($((Get-Item $artifactDest).Length) bytes)"

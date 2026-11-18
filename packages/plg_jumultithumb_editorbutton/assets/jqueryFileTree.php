@@ -1,62 +1,89 @@
 <?php
-//
-// jQuery File Tree PHP Connector
-//
-// Version 1.01
-//
-// Cory S.N. LaViska
-// A Beautiful Site (http://abeautifulsite.net/)
-// 24 March 2008
-//
-// History:
-//
-// 1.01 - updated to work with foreign characters in directory/file names (12 April 2008)
-// 1.00 - released (24 March 2008)
-//
-// Output a list of files for jQuery File Tree
-//
 
-//error_reporting(0);
+use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
-if(isset($_SERVER['HTTP_ORIGIN']))
+require_once __DIR__ . '/joomla-bootstrap.php';
+
+$app = Factory::getApplication();
+$user = $app->getIdentity();
+$allowed = $user->authorise('core.create', 'com_content')
+	|| $user->authorise('core.edit', 'com_content')
+	|| count($user->getAuthorisedCategories('com_content', 'core.create')) > 0;
+$articleId = (int) $app->getUserState('com_content.edit.article.id');
+$allowed = $allowed || ($articleId > 0 && $user->authorise('core.edit', 'com_content.article.' . $articleId));
+
+if(!$allowed)
 {
-	header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
-}
-else
-{
-	header('Access-Control-Allow-Origin: *');
+	http_response_code(403);
+	exit;
 }
 
-if(strtolower($_SERVER['REQUEST_METHOD']) === 'options')
+$token = Session::getFormToken();
+if($app->input->getMethod() !== 'POST' || $app->input->post->get($token, '', 'cmd') !== '1')
 {
-	header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-	header('Access-Control-Allow-Headers: X-Requested-With, Accept');
-	header('Access-Control-Max-Age: 1728000');
-
-	die();
+	http_response_code(403);
+	exit;
 }
 
-$_POST['dir'] = urldecode($_SERVER['DOCUMENT_ROOT'] . '/' . $_POST['dir']);
+$relativePath = rawurldecode($app->input->post->getString('dir', ''));
+$relativePath = trim(str_replace('\\', '/', $relativePath), '/');
+$segments = explode('/', $relativePath);
 
-if(file_exists($_POST['dir']))
+if(strtolower($segments[0] ?? '') !== 'images' || in_array('..', $segments, true) || in_array('.', $segments, true))
 {
-	$files = scandir($_POST['dir'], SCANDIR_SORT_NONE);
-	natcasesort($files);
+	http_response_code(400);
+	exit;
+}
 
-	if(count($files) > 2)
+$siteRoot = realpath(JPATH_SITE);
+$imagesRoot = realpath(JPATH_SITE . '/images');
+$directory = $siteRoot === false ? false : realpath($siteRoot . '/' . $relativePath);
+
+if($imagesRoot === false || $directory === false || !is_dir($directory))
+{
+	http_response_code(404);
+	exit;
+}
+
+$normalizedImagesRoot = rtrim(str_replace('\\', '/', $imagesRoot), '/');
+$normalizedDirectory = str_replace('\\', '/', $directory);
+$imagesPrefix = $normalizedImagesRoot . '/';
+$isInsideImages = DIRECTORY_SEPARATOR === '\\'
+	? strncasecmp($normalizedDirectory, $imagesPrefix, strlen($imagesPrefix)) === 0
+	: str_starts_with($normalizedDirectory, $imagesPrefix);
+
+if(!$isInsideImages)
+{
+	http_response_code(400);
+	exit;
+}
+
+$entries = scandir($directory);
+$folders = [];
+
+foreach($entries === false ? [] : $entries as $entry)
+{
+	if($entry === '.' || $entry === '..' || is_link($directory . DIRECTORY_SEPARATOR . $entry))
 	{
-		/* The 2 accounts for . and .. */
-		echo '<ul class="jqueryFileTree" style="display: none;">';
+		continue;
+	}
 
-		// All dirs
-		foreach ($files as $file)
-		{
-			if(file_exists($_POST['dir'] . $file) && $file !== '.' && $file !== '..' && is_dir($_POST['dir'] . $file))
-			{
-				echo '<li class="directory collapsed"><a href="#" rel="' . htmlentities(str_replace($_SERVER['DOCUMENT_ROOT'] . '/', '', $_POST['dir']) . $file) . '/">' . htmlentities($file) . '</a></li>';
-			}
-		}
-
-		echo '</ul>';
+	if(is_dir($directory . DIRECTORY_SEPARATOR . $entry))
+	{
+		$folders[] = $entry;
 	}
 }
+
+natcasesort($folders);
+echo '<ul class="jqueryFileTree">';
+
+foreach($folders as $folder)
+{
+	$childPath = $relativePath . '/' . $folder . '/';
+	echo '<li class="directory collapsed"><a href="#" rel="' . htmlspecialchars($childPath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">'
+		. htmlspecialchars($folder, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+		. '</a></li>';
+}
+
+echo '</ul>';
