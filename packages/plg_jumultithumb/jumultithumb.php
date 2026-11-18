@@ -247,6 +247,12 @@ class plgContentjumultithumb extends CMSPlugin
         }
 
         $imgsource = Utils::img_source($img['src'] ?? '');
+
+        if ($imgsource === '')
+        {
+            return $option['image'];
+        }
+
         $imgalt = $img['alt'] ?? '';
         $imgtitle = $img['title'] ?? '';
         $imgalign = $img['align'] ?? '';

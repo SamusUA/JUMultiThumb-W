@@ -3,15 +3,15 @@
            type="plugin"
            group="editors-xtd"
            method="upgrade">
-    <name>plg_jumultithumb_editorbutton</name>
+    <name>PLG_EDITORS_XTD_JUMULTITHUMB_EDITORBUTTON</name>
     <author>Studio WEBUS</author>
     <creationDate>2026-11-18</creationDate>
     <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.3-alpha</version>
-    <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
+    <version>6.0.4-alpha</version>
+    <description>PLG_EDITORS_XTD_JUMULTITHUMB_EDITORBUTTON_DESC</description>
     <files>
         <folder>services</folder>
         <filename plugin="jumultithumb_editorbutton">jumultithumb_editorbutton.php</filename>
@@ -23,5 +23,6 @@
         <language tag="en-GB">en-GB/en-GB.plg_editors-xtd_jumultithumb_editorbutton.ini</language>
         <language tag="en-GB">en-GB/en-GB.plg_editors-xtd_jumultithumb_editorbutton.sys.ini</language>
         <language tag="uk-UA">uk-UA/uk-UA.plg_editors-xtd_jumultithumb_editorbutton.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.plg_editors-xtd_jumultithumb_editorbutton.sys.ini</language>
     </languages>
 </extension>

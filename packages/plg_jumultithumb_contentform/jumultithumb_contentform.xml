@@ -10,8 +10,8 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.3-alpha</version>
-    <description>JUMultiThumb Content Form</description>
+    <version>6.0.4-alpha</version>
+    <description>PLG_JUMULTITHUMB_CONTENTFORM_DESCRIPTION</description>
 
     <files>
         <folder>services</folder>
@@ -23,6 +23,8 @@
     <languages folder="language">
         <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_contentform.ini</language>
         <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_contentform.sys.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.plg_content_jumultithumb_contentform.ini</language>
+        <language tag="uk-UA">uk-UA/uk-UA.plg_content_jumultithumb_contentform.sys.ini</language>
     </languages>
 
 </extension>

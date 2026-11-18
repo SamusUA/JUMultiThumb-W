@@ -17,7 +17,76 @@ class Utils
 {
 	public static function img_source(string $src): string
 	{
-		return str_replace(Uri::base(), '', $src);
+		$base = Uri::base();
+
+		if($base !== '' && str_starts_with($src, $base))
+		{
+			$src = substr($src, strlen($base));
+		}
+		elseif(is_string(parse_url($src, PHP_URL_SCHEME)))
+		{
+			return $src;
+		}
+
+		$path = parse_url($src, PHP_URL_PATH);
+
+		if(!is_string($path) || $path === '')
+		{
+			return '';
+		}
+
+		$segments = [];
+
+		foreach(explode('/', str_replace('\\', '/', rawurldecode($path))) as $segment)
+		{
+			if($segment === '' || $segment === '.')
+			{
+				continue;
+			}
+
+			if($segment === '..')
+			{
+				if($segments !== [])
+				{
+					array_pop($segments);
+				}
+
+				continue;
+			}
+
+			$segments[] = $segment;
+		}
+
+		$relativePath = implode('/', $segments);
+
+		if($relativePath === '')
+		{
+			return '';
+		}
+
+		$siteRoot = realpath(JPATH_SITE);
+
+		if($siteRoot === false)
+		{
+			return '';
+		}
+
+		$absolutePath = $siteRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+		$resolvedPath = realpath($absolutePath);
+
+		if($resolvedPath === false)
+		{
+			return '';
+		}
+
+		$normalizedRoot = rtrim(str_replace('\\', '/', $siteRoot), '/');
+		$normalizedPath = str_replace('\\', '/', $resolvedPath);
+		$rootPrefix = $normalizedRoot . '/';
+		$isWithinSite = DIRECTORY_SEPARATOR === '\\'
+			? strncasecmp($normalizedPath, $rootPrefix, strlen($rootPrefix)) === 0
+			: str_starts_with($normalizedPath, $rootPrefix);
+
+		return $isWithinSite ? $relativePath : '';
 	}
 
 	public static function img_alt(string $alt): string
