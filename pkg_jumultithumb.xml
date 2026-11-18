@@ -8,8 +8,8 @@
     <author>Studio WEBUS</author>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.6-alpha</version>
-    <creationDate>2026-11-18</creationDate>
+    <version>6.0.7-alpha</version>
+    <creationDate>2026-11-19</creationDate>
     <scriptfile>script.php</scriptfile>
 
     <files folder="packages">

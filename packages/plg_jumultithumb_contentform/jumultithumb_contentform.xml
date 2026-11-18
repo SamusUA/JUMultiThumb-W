@@ -5,12 +5,12 @@
            method="upgrade">
     <name>PLG_JUMULTITHUMB_CONTENTFORM</name>
     <author>Studio WEBUS</author>
-    <creationDate>2026-11-18</creationDate>
+    <creationDate>2026-11-19</creationDate>
     <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.6-alpha</version>
+    <version>6.0.7-alpha</version>
     <description>PLG_JUMULTITHUMB_CONTENTFORM_DESCRIPTION</description>
 
     <files>

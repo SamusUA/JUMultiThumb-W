@@ -2,6 +2,16 @@ import PhotoSwipeLightbox from './photoswipe-lightbox.esm.js';
 
 const imageLinks = 'a[data-pswp-width][data-pswp-height]';
 
+function bindLightbox(gallery, children) {
+	const lightbox = new PhotoSwipeLightbox({
+		gallery,
+		children,
+		pswpModule: () => import('./photoswipe.esm.js')
+	});
+
+	lightbox.init();
+}
+
 const bodyGalleries = [
 	{
 		group: 'jumultithumb-inline',
@@ -20,13 +30,7 @@ bodyGalleries.forEach(({ group, selector }) => {
 
 	if (!hasImages) return;
 
-	const lightbox = new PhotoSwipeLightbox({
-		gallery: document.body,
-		children: `a[data-pswp-width][data-pswp-height][data-pswp-gallery="${group}"]`,
-		pswpModule: () => import('./photoswipe.esm.js')
-	});
-
-	lightbox.init();
+	bindLightbox(document.body, `a[data-pswp-width][data-pswp-height][data-pswp-gallery="${group}"]`);
 });
 
 document.querySelectorAll('.article-full-image img, .article-intro-image img, .com-content-article__full-image img, .com-content-article__intro-image img').forEach((image) => {
@@ -50,11 +54,5 @@ document.querySelectorAll('.article-full-image img, .article-intro-image img, .c
 });
 
 document.querySelectorAll('.juphotogallery').forEach((gallery) => {
-	const lightbox = new PhotoSwipeLightbox({
-		gallery,
-		children: imageLinks,
-		pswpModule: () => import('./photoswipe.esm.js')
-	});
-
-	lightbox.init();
+	bindLightbox(gallery, imageLinks);
 });

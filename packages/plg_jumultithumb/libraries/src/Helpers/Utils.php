@@ -217,10 +217,26 @@ class Utils
 	public static function loadPhotoSwipe(): void
 	{
 		$document = Factory::getDocument();
-		$assetBase = rtrim(Uri::root(true), '/') . '/plugins/content/jumultithumb/assets/photoswipe/';
+		$assetPath = 'plugins/content/jumultithumb/assets/photoswipe';
+		$assetBase = rtrim(Uri::root(true), '/') . '/' . $assetPath . '/';
 
 		$document->addStyleSheet($assetBase . 'photoswipe.css');
-		$document->addScript($assetBase . 'photoswipe-init.js', [], ['type' => 'module']);
+		$webAssetManager = $document->getWebAssetManager();
+		$scriptName = 'plg_content_jumultithumb.photoswipe-init';
+
+		if($webAssetManager->assetExists('script', $scriptName))
+		{
+			$webAssetManager->useScript($scriptName);
+		}
+		else
+		{
+			$webAssetManager->registerAndUseScript(
+				$scriptName,
+				$assetPath . '/photoswipe-init.js',
+				[],
+				['type' => 'module']
+			);
+		}
 	}
 
 	/**

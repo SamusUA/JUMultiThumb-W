@@ -23,12 +23,9 @@ defined('_JEXEC') or die;
 
 require_once dirname(__DIR__) . '/jumultithumb/libraries/vendor/autoload.php';
 
-if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.php')) { require_once JPATH_LIBRARIES . '/juimage/JUImage.php'; }
-
 class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 {
 	protected $modeHelper;
-	protected $juimg;
 	protected $app;
 	protected $doc;
 	protected $option;
@@ -47,12 +44,16 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 		parent::__construct($subject, $config);
 		$this->loadLanguage();
 
-		if (class_exists('JUImage')) { $this->juimg = new JUImage(); }
 		$this->app        = Factory::getApplication();
+		$this->option     = (string) $this->app->input->get('option', '');
+		if($this->option !== 'com_content')
+		{
+			return;
+		}
+
 		$this->doc        = Factory::getDocument();
-		$this->option     = $this->app->input->get('option');
 		$this->itemid     = $this->app->input->getInt('Itemid');
-		$this->modeHelper = '\\JUMultiThumb\\Adapters\\' . $this->option;
+		$this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
 	}
 
 	/**
@@ -65,7 +66,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 */
 	public function onContentBeforeDisplay($context, $article): void
 	{
-		if(class_exists($this->modeHelper) === false)
+		if($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || class_exists($this->modeHelper) === false)
 		{
 			return;
 		}
@@ -81,7 +82,23 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 		}
 
 		$link          = $this->modeHelper::link($article);
-		$article->text = AutoLinks::handleImgLinks($article->text, $article->title, $link, 1);
+		if($link !== '')
+		{
+			$article->text = AutoLinks::handleImgLinks((string) ($article->text ?? ''), (string) ($article->title ?? ''), $link, 1);
+		}
+	}
+
+	public function onBeforeCompileHead(): void
+	{
+		if($this->option !== 'com_content' || $this->app->getName() !== 'site' || !class_exists($this->modeHelper))
+		{
+			return;
+		}
+
+		if($this->modeHelper::view('Component'))
+		{
+			Utils::loadPhotoSwipe();
+		}
 	}
 
 	/**
@@ -95,7 +112,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 */
 	public function onContentPrepare($context, $article): void
 	{
-		if(class_exists($this->modeHelper) === false)
+		if($this->option !== 'com_content' || !is_object($article) || class_exists($this->modeHelper) === false)
 		{
 			return;
 		}
@@ -105,7 +122,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 			return;
 		}
 
-		if(!($this->modeHelper::view('Article')) && ($this->params->get('useimgagegallery') == '0'))
+		if(!($this->modeHelper::view('Article')) && ($this->params->get('useimgagegallery') == '0') && isset($article->text) && is_string($article->text))
 		{
 			$regex = "/<p>\s*{gallery\s+(.*?)}\s*</p>/i";
 			preg_match_all($regex, $article->text, $matches, PREG_SET_ORDER);
@@ -143,6 +160,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 */
 	public function GalleryReplace($text, $article)
 	{
+		$text = is_string($text) ? $text : '';
 		$regex = "/{gallery\s+(.*?)}/i";
 		preg_match_all($regex, $text, $matches, PREG_SET_ORDER);
 
@@ -153,43 +171,24 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 			foreach($matches as $match)
 			{
 				$matcheslist = explode('|', $match[ 1 ]);
+				$galltitle = trim(str_replace('title=', '', (string) ($matcheslist[1] ?? '')));
+				$gallstyle = trim(str_replace('class=', '', (string) ($matcheslist[2] ?? '')));
+				$gallwidth = (int) ($this->params->get('gallwidth') ?: 130);
+				$gallheight = (int) ($this->params->get('gallheight') ?: 130);
+				$gallcropzoom = $this->params->get('gallcropzoom') ?? 1;
 
-				$galltitle = null;
-				$gallstyle = null;
-
-				if(!array_key_exists(1, $matcheslist))
+				if($galltitle === '')
 				{
-					$matcheslist[ 1 ] = null;
+					$galltitle = (string) ($this->params->get('gallery_title') ?? '');
 				}
 
-				if(!array_key_exists(2, $matcheslist))
+				if($gallstyle === '')
 				{
-					$matcheslist[ 2 ] = $galltitle;
+					$gallstyle = (string) ($this->params->get('cssclass') ?? '');
 				}
 
-				if(!array_key_exists(3, $matcheslist))
-				{
-					$matcheslist[ 3 ] = $gallstyle;
-				}
-
-				$gallwidth    = $this->params->get('gallwidth');
-				$gallheight   = $this->params->get('gallheight');
-				$gallcropzoom = $this->params->get('gallcropzoom');
-
-				$galltitle = str_replace('title=', '', trim($matcheslist[ 1 ]));
-				if(!$galltitle)
-				{
-					$galltitle = $this->params->get('gallery_title');
-				}
-
-				$gallstyle = str_replace('class=', '', trim($matcheslist[ 2 ]));
-				if(!$gallstyle)
-				{
-					$gallstyle = $this->params->get('cssclass');
-				}
-
-				$img_title = preg_replace('/"/', "'", $article->title);
-				$folder = trim($matcheslist[0] ?? '');
+				$img_title = preg_replace('/"/', "'", (string) ($article->title ?? ''));
+				$folder = trim((string) ($matcheslist[0] ?? ''));
 				$img_folder = GalleryPath::resolve($folder, JPATH_SITE . '/images');
 				$siteRoot = realpath(JPATH_SITE);
 

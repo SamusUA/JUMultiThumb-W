@@ -24,11 +24,6 @@ defined('_JEXEC') or die;
 
 require_once __DIR__ . '/libraries/vendor/autoload.php';
 
-if (!class_exists('JUImage'))
-{
-    if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.php')) { require_once JPATH_LIBRARIES . '/juimage/JUImage.php'; }
-}
-
 class plgContentjumultithumb extends CMSPlugin
 {
     protected $modeHelper;
@@ -44,17 +39,32 @@ class plgContentjumultithumb extends CMSPlugin
 
         $this->loadLanguage();
 
-        if (class_exists('JUImage')) { $this->juimg = new JUImage(); }
         $this->app = Factory::getApplication();
+        $this->option = (string) $this->app->input->get('option', '');
+        if ($this->option !== 'com_content')
+        {
+            return;
+        }
+
         $this->doc = Factory::getDocument();
-        $this->option = $this->app->input->get('option');
         $this->itemid = $this->app->input->getInt('Itemid');
-        $this->modeHelper = '\\JUMultiThumb\\Adapters\\' . ($this->option ?: 'com_content');
+
+        if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.php'))
+        {
+            require_once JPATH_LIBRARIES . '/juimage/JUImage.php';
+        }
+
+        if (class_exists('JUImage'))
+        {
+            $this->juimg = new JUImage();
+        }
+
+        $this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
     }
 
     public function onContentBeforeDisplay($context, $article): void
     {
-        if (!is_object($article) || !class_exists($this->modeHelper))
+        if ($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || !class_exists($this->modeHelper))
         {
             return;
         }
@@ -66,6 +76,10 @@ class plgContentjumultithumb extends CMSPlugin
 
         $onlyFirstImage = (int) $this->params->get('Only_For_First_Image');
         $link = $this->modeHelper::link($article);
+        if ($link === '')
+        {
+            return;
+        }
 
         $article->text = AutoLinks::handleImgLinks($article->text ?? '', $article->title ?? '', $link, $onlyFirstImage);
         $article->introtext = AutoLinks::handleImgLinks($article->introtext ?? '', $article->title ?? '', $link, $onlyFirstImage);
@@ -73,7 +87,7 @@ class plgContentjumultithumb extends CMSPlugin
 
     public function onContentPrepare($context, $article): void
     {
-        if (!is_object($article) || !class_exists($this->modeHelper))
+        if ($this->option !== 'com_content' || !is_object($article) || !class_exists($this->modeHelper))
         {
             return;
         }
@@ -364,7 +378,7 @@ class plgContentjumultithumb extends CMSPlugin
 
     public function onBeforeCompileHead(): bool
     {
-        if ($this->app->getName() !== 'site' || !$this->modeHelper::view('Component'))
+        if ($this->option !== 'com_content' || !class_exists($this->modeHelper) || $this->app->getName() !== 'site' || !$this->modeHelper::view('Component'))
         {
             return true;
         }
@@ -390,6 +404,9 @@ class plgContentjumultithumb extends CMSPlugin
 
                 case 'photoswipe':
                 case 'lightgallery':
+                    Utils::loadPhotoSwipe();
+                    break;
+
                 default:
                     break;
             }

@@ -77,23 +77,27 @@ class com_content
 	 */
 	public static function link($article): string
 	{
+		if(!is_object($article) || !isset($article->slug, $article->catid))
+		{
+			return '';
+		}
+
 		$app = Factory::getApplication();
+		$params = $article->params ?? null;
+		$route = RouteHelper::getArticleRoute((string) $article->slug, (int) $article->catid);
 
-		if($article->params->get('access-view'))
+		if(is_object($params) && method_exists($params, 'get') && $params->get('access-view'))
 		{
-			$link = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
-		}
-		else
-		{
-			$active    = $app->getMenu()->getActive();
-			$itemId    = $active->id;
-			$link1     = Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId);
-			$returnURL = Route::_(RouteHelper::getArticleRoute($article->slug, $article->catid));
-			$link      = Uri::getInstance($link1);
-
-			$link->setVar('return', base64_encode($returnURL));
+			return Route::_($route);
 		}
 
-		return $link;
+		$active = $app->getMenu()->getActive();
+		$itemId = (int) ($active->id ?? 0);
+		$loginUrl = Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId);
+		$returnUrl = Route::_($route);
+		$link = Uri::getInstance($loginUrl);
+		$link->setVar('return', base64_encode($returnUrl));
+
+		return (string) $link;
 	}
 }
