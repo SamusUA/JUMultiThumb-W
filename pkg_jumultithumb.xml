@@ -8,11 +8,12 @@
     <author>Studio WEBUS</author>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.4-alpha</version>
+    <version>6.0.5-alpha</version>
     <creationDate>2026-11-18</creationDate>
     <scriptfile>script.php</scriptfile>
 
     <files folder="packages">
+        <file type="library" id="juimage">lib_juimage.zip</file>
         <file type="plugin" id="jumultithumb" group="content">plg_jumultithumb.zip</file>
         <file type="plugin" id="jumultithumb_contentform" group="content">plg_jumultithumb_contentform.zip</file>
         <file type="plugin" id="jumultithumb_gallery" group="content">plg_jumultithumb_gallery.zip</file>
