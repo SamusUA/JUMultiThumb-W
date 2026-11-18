@@ -252,9 +252,10 @@ class plgContentjumultithumb extends CMSPlugin
         $imgalign = $img['align'] ?? '';
 
         $imgstyle = '';
-        if (preg_match('#float:(.*?);#s', $img['style'] ?? '', $imgstyle))
+        $styleMatches = [];
+        if (preg_match('#float:(.*?);#s', $img['style'] ?? '', $styleMatches) === 1)
         {
-            $imgstyle = $imgstyle[1];
+            $imgstyle = $styleMatches[1] ?? '';
         }
 
         $imgClass = Utils::img_class([

@@ -3,7 +3,7 @@
            type="plugin"
            group="content"
            method="upgrade">
-    <name>PLG_JUMULTITHUMB-W</name>
+    <name>PLG_JUMULTITHUMB</name>
     <author>Studio WEBUS</author>
     <creationDate>2026-11-18</creationDate>
     <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>

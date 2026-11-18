@@ -83,7 +83,7 @@ class plgContentJUMultiThumb_com_content
 	/**
 	 * @param $article
 	 *
-	 * @return JURI
+	 * @return \Joomla\CMS\Uri\Uri
 	 *
 	 * @throws Exception
 	 * @since 7.0
@@ -100,7 +100,7 @@ class plgContentJUMultiThumb_com_content
 			$itemId    = $active->id;
 			$link1     = Route::_('index.php?option=com_users&view=login&Itemid=' . $itemId);
 			$returnURL = Route::_(ContentHelperRoute::getArticleRoute($article->slug, $article->catid));
-			$link      = new JURI($link1);
+			$link      = Uri::getInstance($link1);
 
 			$link->setVar('return', base64_encode($returnURL));
 		}

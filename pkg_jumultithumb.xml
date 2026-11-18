@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <extension type="package" version="5.0" method="upgrade">
-    <name>PLG_JUMULTITHUMB-W</name>
+    <name>PLG_JUMULTITHUMB</name>
     <packagename>jumultithumb</packagename>
     <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
