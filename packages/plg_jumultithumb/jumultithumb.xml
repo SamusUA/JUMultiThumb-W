@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extension version="4.2"
+﻿<?xml version="1.0" encoding="utf-8"?>
+<extension
            type="plugin"
            group="content"
            method="upgrade">
     <name>PLG_JUMULTITHUMB</name>
     <author>Denys Nosov</author>
-    <creationDate>@date@</creationDate>
+    <creationDate>2026-11-18</creationDate>
     <copyright>(C) 2007-2023 Denys Nosov. All rights reserved.</copyright>
     <license>http://creativecommons.org/licenses/by-nc-nd/3.0/ Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 License
     </license>
     <authorEmail>denys@joomla-ua.org</authorEmail>
     <authorUrl>https://joomla-ua.org</authorUrl>
-    <version>@version@</version>
+    <version>6.0.0-alpha</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -47,8 +47,6 @@
         >
 
             <fieldset name="BASIC">
-
-				<fieldset name="BASIC2">
 	                <field
 			                name="resall"
 			                type="radio"
@@ -398,12 +396,11 @@
 
                 <field name="selectlightbox"
                        type="list"
-                       default="jmodal"
+                       default="lightgallery"
                        label="PLG_JUMULTITHUMB_SELECT_LIGHTBOX"
                        showon="uselightbox:1"
                 >
-                    <option value="jmodal">Joomla Modal window (Mootools)</option>
-                    <option value="lightgallery">LightGallery (JQuery)</option>
+                    <option value="lightgallery">LightGallery</option>
                     <option value="customjs">PLG_JUMULTITHUMB_CUSTOM_JS</option>
                 </field>
 
@@ -427,7 +424,7 @@
 
                 <field name="customjsparam"
                        type="textarea"
-                       default="&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;[CUSTOM CSS URL]&quot; /&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;[CUSTOM JS URL]&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot;&gt;[CUSTOM JS CODE]&lt;/script&gt;"
+                       default=""
                        size="2"
                        label=""
                        rows="6"
@@ -435,8 +432,6 @@
                        filter="raw"
                        showon="uselightbox:1[AND]selectlightbox:customjs"
                 />
-
-            </fieldset>
 
             </fieldset>
 
