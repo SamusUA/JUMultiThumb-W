@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <extension type="package" version="5.0" method="upgrade">
-    <name>PLG_JUMULTITHUMB</name>
+    <name>PLG_JUMULTITHUMB-W</name>
     <packagename>jumultithumb</packagename>
-    <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine</copyright>
+    <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
-    <author>Denys Nosov, Joomla! Ukraine</author>
-    <authorEmail>denys@joomla-ua.org</authorEmail>
-    <authorUrl>https://joomla-ua.org</authorUrl>
-    <version>6.0.0-alpha</version>
+    <author>Studio WEBUS</author>
+    <authorEmail>studio@webus.in.ua</authorEmail>
+    <authorUrl>https://webus.in.ua</authorUrl>
+    <version>6.0.2-alpha</version>
     <creationDate>2026-11-18</creationDate>
     <scriptfile>script.php</scriptfile>
-    
-    <updateservers>
-        <server type="extension" priority="1" name="JUMultiThumb">https://joomla-ua.org/update/plg/jumultithumb.xml</server>
-    </updateservers>
-    
+
     <files folder="packages">
         <file type="plugin" id="jumultithumb" group="content">plg_jumultithumb.zip</file>
         <file type="plugin" id="jumultithumb_contentform" group="content">plg_jumultithumb_contentform.zip</file>
