@@ -606,5 +606,3 @@ class plgContentjumultithumb extends CMSPlugin
 
 
 
-
-"}]} , 
