@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin"
-           version="4.2"
+           
            group="content"
            method="upgrade">
     <name>PLG_JUMULTITHUMB_GALLERY</name>
@@ -18,11 +18,12 @@
         <folder>services</folder>
         <filename plugin="jumultithumb_gallery">jumultithumb_gallery.php</filename>
         <folder>tmpl</folder>
+        <folder>language</folder>
     </files>
 
-    <languages>
-        <language tag="en-GB">language/en-GB/en-GB.plg_content_jumultithumb_gallery.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.plg_content_jumultithumb_gallery.sys.ini</language>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_gallery.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_gallery.sys.ini</language>
     </languages>
 
     <config addfieldpath="/plugins/content/jumultithumb/fields/">

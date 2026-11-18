@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<extension version="4.2"
+<extension
            type="plugin"
            group="content"
            method="upgrade">
@@ -17,12 +17,13 @@
     <files>
         <folder>services</folder>
         <folder>forms</folder>
+        <folder>language</folder>
         <filename plugin="jumultithumb_contentform">jumultithumb_contentform.php</filename>
     </files>
 
-    <languages>
-        <language tag="en-GB">language/en-GB/en-GB.plg_content_jumultithumb_contentform.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.plg_content_jumultithumb_contentform.sys.ini</language>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_contentform.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_content_jumultithumb_contentform.sys.ini</language>
     </languages>
 
 </extension>

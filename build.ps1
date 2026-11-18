@@ -1,10 +1,24 @@
 <#
 .SYNOPSIS
     Builds JUMultiThumb package for Joomla 5 and Joomla 6 (PHP 8.2 - 8.4+).
+    Ensures 100% standard forward-slash (/) paths in all ZIP entries for Linux/PHP compatibility.
 #>
 
 $ProgressPreference = 'SilentlyContinue'
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+function New-StandardZip($sourceDir, $zipPath) {
+    if (Test-Path $zipPath) { Remove-Item -Path $zipPath -Force }
+    $mode = [System.IO.Compression.ZipArchiveMode]::Create
+    $zipArchive = [System.IO.Compression.ZipFile]::Open($zipPath, $mode)
+    $files = Get-ChildItem -Path $sourceDir -Recurse -File
+    foreach ($f in $files) {
+        $rel = $f.FullName.Substring($sourceDir.Length).TrimStart('\', '/').Replace('\', '/')
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipArchive, $f.FullName, $rel) | Out-Null
+    }
+    $zipArchive.Dispose()
+}
 
 $root = $PSScriptRoot
 $distDir = Join-Path $root "dist"
@@ -27,8 +41,7 @@ foreach ($plg in $plugins) {
     $standaloneDest = Join-Path $distDir "$($plg.Name).zip"
     
     if (Test-Path $src) {
-        if (Test-Path $zipDest) { Remove-Item -Path $zipDest -Force }
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($src, $zipDest)
+        New-StandardZip $src $zipDest
         Copy-Item -Path $zipDest -Destination $standaloneDest -Force
         Write-Output "Built: $($plg.Name).zip ($((Get-Item $zipDest).Length) bytes)"
     } else {
@@ -43,8 +56,7 @@ if (Test-Path (Join-Path $root "language")) {
 }
 
 $finalPkgZip = Join-Path $distDir "pkg_jumultithumb_v6.0.0-alpha.zip"
-if (Test-Path $finalPkgZip) { Remove-Item -Path $finalPkgZip -Force }
-[System.IO.Compression.ZipFile]::CreateFromDirectory($pkgDir, $finalPkgZip)
+New-StandardZip $pkgDir $finalPkgZip
 
 # Also copy final package to artifact directory
 $artifactDir = 'C:\Users\Svyatoslav\.gemini\antigravity\brain\c0cc74cb-a6bf-4108-a7e7-5d06e89d0e19'
