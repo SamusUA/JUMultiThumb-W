@@ -9,10 +9,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
-require_once __DIR__ . '/assets/joomla-bootstrap.php';
+defined('_JEXEC') or die;
 
 $app = Factory::getApplication();
 Factory::getLanguage()->load('plg_editors-xtd_jumultithumb_editorbutton', JPATH_ADMINISTRATOR);
@@ -33,11 +32,11 @@ $galleryPlugin = PluginHelper::getPlugin('content', 'jumultithumb_gallery');
 $galleryParams = new Registry($galleryPlugin ? $galleryPlugin->params : '{}');
 $galleryFolder = trim(str_replace('\\', '/', (string) $galleryParams->get('galleryfolder', '')), '/');
 $galleryFolder = preg_replace('#^images/#i', '', $galleryFolder);
-$rootFolder = 'images' . ($galleryFolder !== '' ? '/' . $galleryFolder : '');
+$rootFolder = 'images';
 $editorId = preg_replace('/[^A-Za-z0-9_:-]/', '', $app->input->getString('editor', 'jform_articletext'));
 $editorId = $editorId !== '' ? $editorId : 'jform_articletext';
 $token = Session::getFormToken();
-$connectorUrl = rtrim(Uri::root(true), '/') . '/plugins/editors-xtd/jumultithumb_editorbutton/assets/jqueryFileTree.php';
+$connectorUrl = 'index.php?option=com_ajax&plugin=jumultithumb_editorbutton&group=editors-xtd&format=raw&task=folders';
 $languageTag = htmlspecialchars(Factory::getLanguage()->getTag(), ENT_QUOTES, 'UTF-8');
 $escapedRootFolder = htmlspecialchars($galleryFolder, ENT_QUOTES, 'UTF-8');
 
@@ -64,7 +63,7 @@ header('Content-Type: text/html; charset=utf-8');
 </head>
 <body>
 	<label for="gallery-folder"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER'), ENT_QUOTES, 'UTF-8'); ?></label>
-	<input id="gallery-folder" type="text" value="<?php echo $escapedRootFolder; ?>" autocomplete="off">
+	<input id="gallery-folder" type="text" value="<?php echo $escapedRootFolder; ?>" autocomplete="off" readonly>
 	<div id="gallery-tree" aria-label="<?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER_TREE'), ENT_QUOTES, 'UTF-8'); ?>"></div>
 	<div id="gallery-status" role="status" aria-live="polite"></div>
 

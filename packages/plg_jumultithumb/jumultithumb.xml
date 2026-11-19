@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.7-alpha</version>
+    <version>6.0.8</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -262,9 +262,13 @@
                     <option value="1">JYES</option>
                 </field>
 
-                <field name="Upload watermark"
-                       type="Modal_Upload"
-                       label=""
+                <field name="watermark_image"
+                       type="media"
+                       label="PLG_JUMULTITHUMB_WATERMARK_UPLOAD"
+                       description="PLG_JUMULTITHUMB_WATERMARK_UPLOAD_DESC"
+                       directory="images"
+                       types="images"
+                       preview="tooltip"
                        showon="wm_tab:1"
                 />
 
