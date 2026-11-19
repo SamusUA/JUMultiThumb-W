@@ -99,6 +99,8 @@ class plgContentjumultithumb extends CMSPlugin
 
         $introText = isset($article->introtext) && is_string($article->introtext) ? $article->introtext : null;
         $text = isset($article->text) && is_string($article->text) ? $article->text : null;
+        $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
+        $watermarkAllowed = (int) ($attribs->watermark_intro_only ?? 0) !== 1;
         $processedIntroText = null;
 
         if ($introText !== null)
@@ -112,28 +114,37 @@ class plgContentjumultithumb extends CMSPlugin
 
         if ($text !== null)
         {
-            $article->text = $introText !== null && $text === $introText
-                ? $processedIntroText
-                : @$this->ImgReplace([
+            if ($introText !== null && $text === $introText)
+            {
+                $article->text = $processedIntroText;
+            }
+            elseif (!$watermarkAllowed && is_string($article->fulltext ?? null)
+                && $article->fulltext !== '' && ($fullTextPosition = strrpos($text, $article->fulltext)) !== false)
+            {
+                $article->text = @$this->ImgReplace([
+                    'text' => substr($text, 0, $fullTextPosition),
+                    'article' => $article,
+                ]) . @$this->ImgReplace([
+                    'text' => substr($text, $fullTextPosition),
+                    'article' => $article,
+                    'use_wm' => 0,
+                ]);
+            }
+            else
+            {
+                $article->text = @$this->ImgReplace([
                     'text' => $text,
                     'article' => $article,
                 ]);
+            }
         }
 
         if (isset($article->fulltext))
         {
-            $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
-            $useWm = 1;
-
-            if (isset($attribs->watermark_intro_only) && (int) $attribs->watermark_intro_only === 1)
-            {
-                $useWm = 0;
-            }
-
             $article->fulltext = @$this->ImgReplace([
                 'text' => $article->fulltext,
                 'article' => $article,
-                'use_wm' => $useWm,
+                'use_wm' => $watermarkAllowed ? 1 : 0,
             ]);
         }
 
@@ -239,6 +250,10 @@ class plgContentjumultithumb extends CMSPlugin
         $height = $height > 0 ? $height : 160;
         $quality = (int) $this->params->get('quality', 85);
         $quality = $quality > 0 ? $quality : 85;
+        $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
+        $watermarkAllowed = $type !== 'fulltext' || (int) ($attribs->watermark_intro_only ?? 0) !== 1;
+        $watermarkOriginal = Image::watermarkOptions($this->params, $attribs, 'image', false, $watermarkAllowed);
+        $watermarkThumbnail = Image::watermarkOptions($this->params, $attribs, 'image', true, $watermarkAllowed);
         $thumbnail = $source;
 
         if (!$noResize)
@@ -254,12 +269,25 @@ class plgContentjumultithumb extends CMSPlugin
                 'w' => $width,
                 'h' => $height,
                 'q' => $quality,
+                'watermark' => $watermarkThumbnail,
             ]);
         }
         else
         {
             $width = (int) $dimensions[0];
             $height = (int) $dimensions[1];
+
+            if ($watermarkThumbnail !== null)
+            {
+                $thumbnail = Image::thumb([
+                    'image' => $source,
+                    'zc' => 0,
+                    'w' => $width,
+                    'h' => $height,
+                    'q' => $quality,
+                    'watermark' => $watermarkThumbnail,
+                ]);
+            }
         }
 
         $altEmpty = (int) ($images->{$imageField . '_alt_empty'} ?? 0) === 1;
@@ -278,7 +306,7 @@ class plgContentjumultithumb extends CMSPlugin
             $imageClass = $imageClass !== '' ? $imageClass : (string) $articleParams->get($imageClassField, '');
         }
 
-        $linkImage = $noFullImage ? '' : Utils::largeImage($source, $quality);
+        $linkImage = $noFullImage ? '' : Utils::largeImage($source, $quality, $watermarkOriginal);
         $lightbox = $this->params->get('uselightbox', '1') == 1
             ? (string) $this->params->get('selectlightbox', 'photoswipe')
             : '';
@@ -330,15 +358,7 @@ class plgContentjumultithumb extends CMSPlugin
             return $text;
         }
 
-        $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
-        $watermarkO = $attribs->watermark ?? '0';
-        $watermarkS = $attribs->watermark_s ?? '0';
-
-        if (($option['use_wm'] ?? 1) == 0)
-        {
-            $watermarkO = '0';
-            $watermarkS = '0';
-        }
+        $watermarkAllowed = (int) ($option['use_wm'] ?? 1) === 1;
 
         $text = preg_replace('#<img(.*?)mce_src="(.*?)"(.*?)>#s', "<img\\1\\3>", $text);
         $text = preg_replace('#<p>\s*<img(.*?)/>\s*</p>#s', "<img\\1\\3>", $text);
@@ -352,8 +372,7 @@ class plgContentjumultithumb extends CMSPlugin
                 $replace = $this->JUMultithumbReplacer([
                     'image' => $image,
                     'article' => $article,
-                    'watermark_o' => $watermarkO,
-                    'watermark_s' => $watermarkS,
+                    'watermark_allowed' => $watermarkAllowed,
                 ]);
                 $text = str_replace($image, $replace, $text);
             }
@@ -394,11 +413,9 @@ class plgContentjumultithumb extends CMSPlugin
         $items = $this->params->get('items');
 
         $attribs = json_decode((string) ($option['article']->attribs ?? '')) ?: new \stdClass();
-        $useWm = 1;
-        if (!empty($attribs->watermark_off))
-        {
-            $useWm = 0;
-        }
+        $watermarkAllowed = (bool) ($option['watermark_allowed'] ?? true);
+        $watermarkOriginal = Image::watermarkOptions($this->params, $attribs, 'image', false, $watermarkAllowed);
+        $watermarkThumbnail = Image::watermarkOptions($this->params, $attribs, 'image', true, $watermarkAllowed);
 
         switch ($thumbFilterColor)
         {
@@ -487,10 +504,24 @@ class plgContentjumultithumb extends CMSPlugin
         if ($this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage')
         {
             $size = getimagesize(JPATH_SITE . '/' . $imgsource);
-            $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality);
+            $thumbnail = $imgsource;
+
+            if ($watermarkThumbnail !== null)
+            {
+                $thumbnail = Image::thumb([
+                    'image' => $imgsource,
+                    'zc' => 0,
+                    'w' => (int) $size[0],
+                    'h' => (int) $size[1],
+                    'q' => (int) $quality,
+                    'watermark' => $watermarkThumbnail,
+                ]);
+            }
+
+            $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality, $watermarkOriginal);
 
             return Utils::image('jumultithumb', 'default', [
-                'image' => $imgsource,
+                'image' => $thumbnail,
                 'orig_img' => $imgsource,
                 'link_img' => $linkImage,
                 'w' => $size[0],
@@ -522,8 +553,9 @@ class plgContentjumultithumb extends CMSPlugin
             'farcrop' => $farcrop,
             'farcropbg' => $farcropbg,
             'q' => $quality,
+            'watermark' => $watermarkThumbnail,
         ]);
-        $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality);
+        $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality, $watermarkOriginal);
 
         return Utils::image('jumultithumb', 'default', [
             'image' => $thumbImg,

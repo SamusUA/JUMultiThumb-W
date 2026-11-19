@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.9-beta</version>
+    <version>6.0.10-beta</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -287,10 +287,10 @@
                        type="list"
                        default="BR"
                        label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS"
-                       showon="wm_tab:1[AND]a_watermark:1[AND]a_watermark:2"
+                       showon="wm_tab:1"
                 >
                     <option value="T">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
-                    <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
+                    <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_B</option>
                     <option value="L">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_L</option>
                     <option value="R">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_R</option>
                     <option value="C">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_C</option>
@@ -306,7 +306,7 @@
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_OPAC"
                        description="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_OPAC_TIPS"
-                       showon="wm_tab:1[AND]a_watermark:1[AND]a_watermark:2"
+                       showon="wm_tab:1"
                 />
 
                 <field name="wmx"
@@ -314,7 +314,7 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_XMARGIN"
-                       showon="wm_tab:1[AND]a_watermark:1[AND]a_watermark:2"
+                       showon="wm_tab:1"
                 />
 
                 <field name="wmy"
@@ -322,7 +322,7 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_YMARGIN"
-                       showon="wm_tab:1[AND]a_watermark:1[AND]a_watermark:2"
+                       showon="wm_tab:1"
                 />
 
                 <field name="a_watermark_s"
@@ -340,10 +340,10 @@
                        type="list"
                        default="BR"
                        label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG_POS"
-                       showon="wm_tab:1[AND]a_watermark_s:1[AND]a_watermark_s:2"
+                       showon="wm_tab:1"
                 >
                     <option value="T">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
-                    <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
+                    <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_B</option>
                     <option value="L">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_L</option>
                     <option value="R">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_R</option>
                     <option value="C">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_C</option>
@@ -359,7 +359,7 @@
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG_OPAC"
                        description="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_OPAC_TIPS"
-                       showon="wm_tab:1[AND]a_watermark_s:1[AND]a_watermark_s:2"
+                       showon="wm_tab:1"
                 />
 
                 <field name="wmx_s"
@@ -367,7 +367,7 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_XMARGIN"
-                       showon="wm_tab:1[AND]a_watermark_s:1[AND]a_watermark_s:2"
+                       showon="wm_tab:1"
                 />
 
                 <field name="wmy_s"
@@ -375,7 +375,7 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_YMARGIN"
-                       showon="wm_tab:1[AND]a_watermark_s:1[AND]a_watermark_s:2"
+                       showon="wm_tab:1"
                 />
 
             </fieldset>

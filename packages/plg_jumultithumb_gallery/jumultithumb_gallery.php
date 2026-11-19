@@ -138,14 +138,29 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 			}
 		}
 
+		$attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
+		$allowWatermark = (int) ($attribs->watermark_intro_only ?? 0) !== 1;
+		$fulltext = is_string($article->fulltext ?? null) ? $article->fulltext : '';
+
 		if(isset($article->text))
 		{
-			$article->text = $this->GalleryReplace($article->text, $article);
+			$text = is_string($article->text) ? $article->text : '';
+			$fulltextPosition = !$allowWatermark && $fulltext !== '' ? strrpos($text, $fulltext) : false;
+
+			if($fulltextPosition !== false)
+			{
+				$article->text = $this->GalleryReplace(substr($text, 0, $fulltextPosition), $article)
+					. $this->GalleryReplace(substr($text, $fulltextPosition), $article, false);
+			}
+			else
+			{
+				$article->text = $this->GalleryReplace($text, $article);
+			}
 		}
 
 		if(isset($article->fulltext))
 		{
-			$article->fulltext = $this->GalleryReplace($article->fulltext, $article);
+			$article->fulltext = $this->GalleryReplace($article->fulltext, $article, $allowWatermark);
 		}
 	}
 
@@ -158,7 +173,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 * @throws Exception
 	 * @since 7.0
 	 */
-	public function GalleryReplace($text, $article)
+	public function GalleryReplace($text, $article, bool $allowWatermark = true)
 	{
 		$text = is_string($text) ? $text : '';
 		$regex = "/{gallery\s+(.*?)}/i";
@@ -168,6 +183,10 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 		{
 			$plugin = PluginHelper::getPlugin('content', 'jumultithumb') ?: (object) ['params' => '{}'];
 			$json = json_decode((string) $plugin->params) ?: new \stdClass();
+			$attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
+			$watermarkOriginal = Image::watermarkOptions($json, $attribs, 'gallery', false, $allowWatermark);
+			$watermarkThumbnail = Image::watermarkOptions($json, $attribs, 'gallery', true, $allowWatermark);
+
 			foreach($matches as $match)
 			{
 				$matcheslist = explode('|', $match[ 1 ]);
@@ -251,7 +270,6 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 						if(!$this->modeHelper::view('Article') && ($this->params->get('useimgagegallery') == '1'))
 						{
 							$_title = mb_strtoupper(mb_substr($img_title, 0, 1)) . mb_substr($img_title, 1);
-							$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85));
 
 							//$_imgparams = array_merge($imp_filtercolor, $usm_filtercolor, $blur_filtercolor, $brit_filtercolor, $cont_filtercolor);
 
@@ -261,12 +279,14 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								'w'     => $this->params->get('width'),
 								'h'     => $this->params->get('height'),
 								'q'     => $json->quality ?? 85,
+								'watermark' => $watermarkThumbnail,
 							]);
+								$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85), $watermarkOriginal);
 
 							return Utils::image('jumultithumb_gallery', 'image', [
 								'image'    => $thumb_img,
 								'orig_img' => $file,
-								'link_img' => $largeImage,
+									'link_img' => $largeImage,
 								'w'        => $this->params->get('width'),
 								'h'        => $this->params->get('height'),
 								'title'    => $_title,
@@ -284,12 +304,13 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 							'w'     => $gallwidth,
 							'h'     => $gallheight,
 							'q'     => $json->quality ?? 85,
+							'watermark' => $watermarkThumbnail,
 						];
 
 						$options = array_merge($imp_filtercolor, $usm_filtercolor, $blur_filtercolor, $brit_filtercolor, $cont_filtercolor, $imgparams);
 
 						$thumb_img = Image::thumb($options);
-						$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85));
+						$largeImage = Utils::largeImage($file, (int) ($json->quality ?? 85), $watermarkOriginal);
 
 						$_title = ($galltitle == '' ? $img_title : $galltitle . '. ' . $img_title);
 						$_title = mb_strtoupper(mb_substr($_title, 0, 1)) . mb_substr($_title, 1);

@@ -101,7 +101,7 @@ class Utils
 		return rtrim(Uri::root(true), '/') . '/' . ltrim($path, '/');
 	}
 
-	public static function largeImage(string $image, int $quality = 85): string
+	public static function largeImage(string $image, int $quality = 85, ?array $watermark = null): string
 	{
 		return Image::thumb([
 			'image' => $image,
@@ -109,6 +109,7 @@ class Utils
 			'w' => 1200,
 			'h' => 900,
 			'q' => $quality,
+			'watermark' => $watermark,
 		]);
 	}
 
