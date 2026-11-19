@@ -9,6 +9,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 defined('_JEXEC') or die;
@@ -37,6 +38,7 @@ $editorId = preg_replace('/[^A-Za-z0-9_:-]/', '', $app->input->getString('editor
 $editorId = $editorId !== '' ? $editorId : 'jform_articletext';
 $token = Session::getFormToken();
 $connectorUrl = 'index.php?option=com_ajax&plugin=jumultithumb_editorbutton&group=editors-xtd&format=raw&task=folders';
+$bootstrapCss = Uri::root() . 'media/vendor/bootstrap/css/bootstrap.min.css';
 $languageTag = htmlspecialchars(Factory::getLanguage()->getTag(), ENT_QUOTES, 'UTF-8');
 $escapedRootFolder = htmlspecialchars($galleryFolder, ENT_QUOTES, 'UTF-8');
 
@@ -48,34 +50,43 @@ header('Content-Type: text/html; charset=utf-8');
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_PICK_GALLERY'), ENT_QUOTES, 'UTF-8'); ?></title>
+	<link rel="stylesheet" href="<?php echo htmlspecialchars($bootstrapCss, ENT_QUOTES, 'UTF-8'); ?>">
 	<style>
-		body { font: 14px/1.5 sans-serif; margin: 1rem; }
-		label { display: block; font-weight: 600; margin: .75rem 0 .25rem; }
-		input { box-sizing: border-box; max-width: 100%; padding: .4rem; width: 100%; }
-		#gallery-tree { border: 1px solid #ccc; max-height: 12rem; overflow: auto; padding: .5rem; }
-		#gallery-tree ul { list-style: none; margin: .25rem 0 .25rem 1rem; padding: 0; }
+		body { background: var(--body-bg, #f0f4fb); color: var(--body-color, #212529); padding: 1rem; }
+		.btn-primary { --bs-btn-color: var(--btn-primary-color, #fff); --bs-btn-bg: var(--btn-primary-bg, #007db0); --bs-btn-border-color: var(--btn-primary-bg, #007db0); --bs-btn-hover-color: var(--btn-primary-color, #fff); --bs-btn-hover-bg: var(--btn-primary-bg-hvr, #006b98); --bs-btn-hover-border-color: var(--btn-primary-bg-hvr, #006b98); --bs-btn-active-bg: var(--btn-primary-bg-hvr, #006b98); --bs-btn-active-border-color: var(--btn-primary-bg-hvr, #006b98); }
+		.btn-outline-primary { --bs-btn-color: var(--link-color, #007db0); --bs-btn-border-color: var(--btn-primary-bg, #007db0); --bs-btn-hover-color: var(--btn-primary-color, #fff); --bs-btn-hover-bg: var(--btn-primary-bg, #007db0); --bs-btn-hover-border-color: var(--btn-primary-bg, #007db0); --bs-btn-active-bg: var(--btn-primary-bg-hvr, #006b98); --bs-btn-active-border-color: var(--btn-primary-bg-hvr, #006b98); }
+		.picker-card { background: var(--card-bg, #fff); border: 1px solid var(--border-color, #dfe3e7); border-radius: .5rem; padding: 1rem; }
+		.picker-card + .picker-card { margin-top: 1rem; }
+		#gallery-tree { background: var(--form-control-bg, var(--body-bg, #fff)); border: 1px solid var(--border-color, #dfe3e7); border-radius: .375rem; max-height: 12rem; overflow: auto; padding: .5rem; }
+		#gallery-tree ul { list-style: none; margin: .4rem 0 .4rem 1rem; padding: 0; }
 		#gallery-tree > ul { margin-left: 0; }
-		#gallery-tree a { color: #1769aa; text-decoration: none; }
-		#gallery-tree a:hover { text-decoration: underline; }
+		#gallery-tree li + li { margin-top: .35rem; }
+		#gallery-tree a.folder-link { align-items: center; display: flex; gap: .75rem; justify-content: space-between; text-align: left; white-space: normal; width: 100%; }
+		.folder-counts { display: inline-flex; flex-shrink: 0; gap: .35rem; }
+		#gallery-tree a.folder-link.is-selected { background: var(--btn-primary-bg, #007db0); border-color: var(--btn-primary-bg, #007db0); color: var(--btn-primary-color, #fff); }
 		#gallery-status { min-height: 1.5em; }
-		.actions { margin-top: 1rem; text-align: right; }
+		.actions { border-top: 1px solid var(--border-color, #dfe3e7); display: flex; justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; }
 	</style>
 </head>
 <body>
-	<label for="gallery-folder"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER'), ENT_QUOTES, 'UTF-8'); ?></label>
-	<input id="gallery-folder" type="text" value="<?php echo $escapedRootFolder; ?>" autocomplete="off" readonly>
-	<div id="gallery-tree" aria-label="<?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER_TREE'), ENT_QUOTES, 'UTF-8'); ?>"></div>
-	<div id="gallery-status" role="status" aria-live="polite"></div>
+	<section class="picker-card">
+		<label class="form-label" for="gallery-folder"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER'), ENT_QUOTES, 'UTF-8'); ?></label>
+		<input class="form-control" id="gallery-folder" type="text" value="<?php echo $escapedRootFolder; ?>" autocomplete="off" readonly>
+		<div id="gallery-tree" class="mt-2" aria-label="<?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER_TREE'), ENT_QUOTES, 'UTF-8'); ?>"></div>
+		<div id="gallery-status" class="small text-body-secondary mt-2" role="status" aria-live="polite"></div>
+	</section>
 
-	<label for="gallery-title"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_TITLE'), ENT_QUOTES, 'UTF-8'); ?></label>
-	<input id="gallery-title" type="text" autocomplete="off">
+	<section class="picker-card">
+		<label class="form-label" for="gallery-title"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_TITLE'), ENT_QUOTES, 'UTF-8'); ?></label>
+		<input class="form-control" id="gallery-title" type="text" autocomplete="off">
 
-	<label for="gallery-class"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_CLASS'), ENT_QUOTES, 'UTF-8'); ?></label>
-	<input id="gallery-class" type="text" autocomplete="off">
+		<label class="form-label mt-3" for="gallery-class"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_CLASS'), ENT_QUOTES, 'UTF-8'); ?></label>
+		<input class="form-control" id="gallery-class" type="text" autocomplete="off">
 
-	<div class="actions">
-		<button id="insert-gallery" type="button" class="btn btn-primary"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_INSERT'), ENT_QUOTES, 'UTF-8'); ?></button>
-	</div>
+		<div class="actions">
+			<button id="insert-gallery" type="button" class="btn btn-primary"><?php echo htmlspecialchars(Text::_('PLG_JUMULTITHUMB_EDITORBUTTON_INSERT'), ENT_QUOTES, 'UTF-8'); ?></button>
+		</div>
+	</section>
 
 	<script>
 	(() => {
@@ -86,6 +97,42 @@ header('Content-Type: text/html; charset=utf-8');
 		const tree = document.getElementById('gallery-tree');
 		const folderInput = document.getElementById('gallery-folder');
 		const status = document.getElementById('gallery-status');
+		const parentDocument = window.parent.document;
+		const parentRoot = parentDocument.documentElement;
+		const syncedVariables = new Set();
+
+		function syncAdminTheme() {
+			const root = document.documentElement;
+			const parentStyle = window.parent.getComputedStyle(parentRoot);
+
+			syncedVariables.forEach((property) => root.style.removeProperty(property));
+			syncedVariables.clear();
+
+			['data-bs-theme', 'data-color-scheme', 'data-color-scheme-os'].forEach((attribute) => {
+				if (parentRoot.hasAttribute(attribute)) {
+					root.setAttribute(attribute, parentRoot.getAttribute(attribute));
+				} else {
+					root.removeAttribute(attribute);
+				}
+			});
+
+			for (let index = 0; index < parentStyle.length; index++) {
+				const property = parentStyle.item(index);
+				if (property.startsWith('--')) {
+					const value = parentStyle.getPropertyValue(property).trim();
+					if (value) {
+						root.style.setProperty(property, value);
+						syncedVariables.add(property);
+					}
+				}
+			}
+		}
+
+		syncAdminTheme();
+		new window.parent.MutationObserver(syncAdminTheme).observe(parentRoot, {
+			attributes: true,
+			attributeFilter: ['data-bs-theme', 'data-color-scheme', 'data-color-scheme-os', 'style']
+		});
 
 		async function loadFolders(path, list) {
 			const body = new URLSearchParams({ dir: path, [tokenName]: '1' });
@@ -113,6 +160,8 @@ header('Content-Type: text/html; charset=utf-8');
 			const item = link.closest('li');
 			const path = link.getAttribute('rel');
 			folderInput.value = path.replace(/^images\//i, '').replace(/\/+$/, '');
+			tree.querySelectorAll('a.folder-link.is-selected').forEach((selectedLink) => selectedLink.classList.remove('is-selected'));
+			link.classList.add('is-selected');
 
 			if (item.classList.contains('expanded')) {
 				item.classList.remove('expanded');

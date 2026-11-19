@@ -149,14 +149,100 @@ class plgButtonJUmultithumb_EditorButton extends CMSPlugin
 
 		foreach($subfolders as $folder)
 		{
+			$childPath = $directory . DIRECTORY_SEPARATOR . $folder;
+
+			if(is_link($childPath))
+			{
+				Factory::getApplication()->setHeader('status', 400, true);
+
+				return '';
+			}
+
+			$childDirectory = realpath($childPath);
+
+			if($childDirectory === false || !is_dir($childDirectory))
+			{
+				Factory::getApplication()->setHeader('status', 404, true);
+
+				return '';
+			}
+
+			if(!$this->isWithinPath($childDirectory, $imagesRoot))
+			{
+				Factory::getApplication()->setHeader('status', 400, true);
+
+				return '';
+			}
+
+			$counts = $this->countDirectoryContents($childDirectory);
+
+			if($counts === null)
+			{
+				Factory::getApplication()->setHeader('status', 500, true);
+
+				return '';
+			}
+
 			$childPath = $relativePath . '/' . $folder . '/';
-			$html .= '<li class="directory collapsed"><a href="#" rel="'
-				. htmlspecialchars($childPath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">'
-				. htmlspecialchars($folder, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+			$folderCountText = Text::sprintf('PLG_JUMULTITHUMB_EDITORBUTTON_FOLDER_COUNT', $counts['folders']);
+			$fileCountText = Text::sprintf('PLG_JUMULTITHUMB_EDITORBUTTON_FILE_COUNT', $counts['files']);
+			$html .= '<li class="directory collapsed"><a class="btn btn-outline-primary btn-sm folder-link" href="#" rel="'
+				. htmlspecialchars($childPath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" aria-label="'
+				. htmlspecialchars($folder . '; ' . $folderCountText . '; ' . $fileCountText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '" title="'
+				. htmlspecialchars($folderCountText . '; ' . $fileCountText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">'
+				. '<span class="folder-name">' . htmlspecialchars($folder, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span>'
+				. '<span class="folder-counts"><span class="badge rounded-pill text-bg-secondary">'
+				. htmlspecialchars($folderCountText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span><span class="badge rounded-pill text-bg-info">'
+				. htmlspecialchars($fileCountText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span></span>'
 				. '</a></li>';
 		}
 
 		return $html . '</ul>';
+	}
+
+	private function countDirectoryContents(string $directory): ?array
+	{
+		$entries = scandir($directory);
+
+		if($entries === false)
+		{
+			return null;
+		}
+
+		$counts = ['folders' => 0, 'files' => 0];
+
+		foreach($entries as $entry)
+		{
+			if($entry === '.' || $entry === '..')
+			{
+				continue;
+			}
+
+			$path = $directory . DIRECTORY_SEPARATOR . $entry;
+
+			if(is_link($path))
+			{
+				continue;
+			}
+
+			$resolved = realpath($path);
+
+			if($resolved === false || !$this->isWithinPath($resolved, $directory))
+			{
+				continue;
+			}
+
+			if(is_dir($resolved))
+			{
+				$counts['folders']++;
+			}
+			elseif(is_file($resolved))
+			{
+				$counts['files']++;
+			}
+		}
+
+		return $counts;
 	}
 
 	private function isWithinPath(string $path, string $root): bool

@@ -51,7 +51,7 @@ $data = (object) $displayData;
 				<?php if($data->alt !== ''): ?>
 					<?php if($data->caption == 1): ?>
 						<figcaption class="text-muted">
-							<?php echo $data->alt; ?>
+							<?php echo htmlspecialchars($data->alt, ENT_QUOTES, 'UTF-8'); ?>
 						</figcaption>
 					<?php endif; ?>
 				<?php endif; ?>

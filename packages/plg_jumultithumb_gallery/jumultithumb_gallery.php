@@ -176,6 +176,9 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 				$gallwidth = (int) ($this->params->get('gallwidth') ?: 130);
 				$gallheight = (int) ($this->params->get('gallheight') ?: 130);
 				$gallcropzoom = $this->params->get('gallcropzoom') ?? 1;
+				$imageAlt = $galltitle !== ''
+					? html_entity_decode($galltitle, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+					: (string) ($article->title ?? '');
 
 				if($galltitle === '')
 				{
@@ -268,6 +271,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								'h'        => $this->params->get('height'),
 								'title'    => $_title,
 								'caption'  => $_title,
+								'alt'      => $imageAlt,
 								'lightbox' => 'photoswipe',
 								'pswp_gallery' => '',
 							]);
@@ -297,6 +301,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 							'h'        => $gallheight,
 							'title'    => $_title,
 							'caption'  => $_title,
+							'alt'      => $imageAlt,
 							'lightbox' => 'photoswipe',
 							'pswp_gallery' => '',
 						]);
