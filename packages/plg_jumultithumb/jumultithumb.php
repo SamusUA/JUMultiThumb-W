@@ -147,6 +147,53 @@ class plgContentjumultithumb extends CMSPlugin
             $articleImages = new \stdClass();
         }
 
+        $articleImagesModified = false;
+        $articleText = is_string($article->text ?? null) ? $article->text : '';
+        $introText = is_string($article->introtext ?? null) ? $article->introtext : '';
+        $introImage = $this->renderArticleImage($article, $articleImages, 'intro');
+
+        if ($introImage !== '')
+        {
+            $updatedText = $this->prependImageToSegment($articleText, $introText, $introImage);
+
+            if ($updatedText !== null)
+            {
+                $article->text = $updatedText;
+                $article->introtext = $introImage . $introText;
+                $articleImages->image_intro = '';
+                $articleImagesModified = true;
+            }
+        }
+
+        $articleParams = $article->params ?? null;
+        $canViewFullText = !is_object($articleParams)
+            || !method_exists($articleParams, 'get')
+            || (bool) $articleParams->get('access-view', true);
+        $fullText = is_string($article->fulltext ?? null) ? $article->fulltext : '';
+
+        if ($this->modeHelper::view('Article') && $canViewFullText && $fullText !== '')
+        {
+            $fullTextImage = $this->renderArticleImage($article, $articleImages, 'fulltext');
+
+            if ($fullTextImage !== '')
+            {
+                $updatedText = $this->prependImageToSegment($articleText = (string) ($article->text ?? ''), $fullText, $fullTextImage, true);
+
+                if ($updatedText !== null)
+                {
+                    $article->text = $updatedText;
+                    $article->fulltext = $fullTextImage . $fullText;
+                    $articleImages->image_fulltext = '';
+                    $articleImagesModified = true;
+                }
+            }
+        }
+
+        if ($articleImagesModified)
+        {
+            $article->images = json_encode($articleImages, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+        }
+
         $lightboxMode = (string) $this->params->get('selectlightbox', 'photoswipe');
         if ($this->params->get('uselightbox', '1') == 1
             && in_array($lightboxMode, ['photoswipe', 'lightgallery'], true)
@@ -154,6 +201,120 @@ class plgContentjumultithumb extends CMSPlugin
         {
             Utils::loadPhotoSwipe();
         }
+    }
+
+    private function renderArticleImage(object $article, object $images, string $type): string
+    {
+        $imageField = 'image_' . $type;
+        $source = Utils::img_source(trim((string) ($images->{$imageField} ?? '')));
+
+        if ($source === '' || is_string(parse_url($source, PHP_URL_SCHEME)))
+        {
+            return '';
+        }
+
+        $siteRoot = realpath(JPATH_SITE);
+        $sourcePath = $siteRoot === false
+            ? false
+            : realpath($siteRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $source));
+
+        if ($sourcePath === false || !is_file($sourcePath))
+        {
+            return '';
+        }
+
+        $dimensions = @getimagesize($sourcePath);
+
+        if ($dimensions === false)
+        {
+            return '';
+        }
+
+        $prefix = $type . '_';
+        $noResize = (int) $this->params->get($prefix . 'noresize', 0) === 1;
+        $noFullImage = (int) $this->params->get($prefix . 'nofullimg', 0) === 1;
+        $width = (int) $this->params->get($prefix . 'width', 160);
+        $height = (int) $this->params->get($prefix . 'height', 160);
+        $width = $width > 0 ? $width : 160;
+        $height = $height > 0 ? $height : 160;
+        $quality = (int) $this->params->get('quality', 85);
+        $quality = $quality > 0 ? $quality : 85;
+        $thumbnail = $source;
+
+        if (!$noResize)
+        {
+            $thumbnail = Image::thumb([
+                'image' => $source,
+                'zc' => $this->params->get($prefix . 'zc', 1),
+                'cropaspect' => (float) $this->params->get($prefix . 'cropaspect', 1.4),
+                'zoom_crop_bg' => (string) $this->params->get($prefix . 'zoomcropbg', '#eeeeee'),
+                'far_crop' => $this->params->get($prefix . 'farcrop', 0),
+                'farcrop' => $this->params->get($prefix . 'farcrop', 0),
+                'farcropbg' => (string) $this->params->get($prefix . 'farcropbg', '#eeeeee'),
+                'w' => $width,
+                'h' => $height,
+                'q' => $quality,
+            ]);
+        }
+        else
+        {
+            $width = (int) $dimensions[0];
+            $height = (int) $dimensions[1];
+        }
+
+        $altEmpty = (int) ($images->{$imageField . '_alt_empty'} ?? 0) === 1;
+        $alt = $altEmpty ? '' : (string) ($images->{$imageField . '_alt'} ?? '');
+        $title = $alt !== '' ? Utils::img_alt($alt) : (string) ($article->title ?? '');
+        $caption = (string) ($images->{$imageField . '_caption'} ?? '');
+        $figureClassField = 'float_' . $type;
+        $imageClassField = 'imgclass_' . $type;
+        $articleParams = $article->params ?? null;
+        $figureClass = (string) ($images->{$figureClassField} ?? '');
+        $imageClass = (string) ($images->{$imageClassField} ?? '');
+
+        if (is_object($articleParams) && method_exists($articleParams, 'get'))
+        {
+            $figureClass = $figureClass !== '' ? $figureClass : (string) $articleParams->get($figureClassField, '');
+            $imageClass = $imageClass !== '' ? $imageClass : (string) $articleParams->get($imageClassField, '');
+        }
+
+        $linkImage = $noFullImage ? '' : Utils::largeImage($source, $quality);
+        $lightbox = $this->params->get('uselightbox', '1') == 1
+            ? (string) $this->params->get('selectlightbox', 'photoswipe')
+            : '';
+
+        return Utils::image('jumultithumb', 'default', [
+            'image' => $thumbnail,
+            'orig_img' => $source,
+            'link_img' => $linkImage,
+            'w' => $width,
+            'h' => $height,
+            'class' => $figureClass,
+            'image_class' => $imageClass,
+            'noresize' => $noResize ? 1 : 0,
+            'title' => $title,
+            'alt' => $alt,
+            'caption' => 0,
+            'caption_text' => $caption,
+            'lightbox' => $lightbox,
+        ]);
+    }
+
+    private function prependImageToSegment(string $text, string $segment, string $image, bool $lastMatch = false): ?string
+    {
+        if ($segment === '')
+        {
+            return $text === '' ? $image : null;
+        }
+
+        $position = $lastMatch ? strrpos($text, $segment) : strpos($text, $segment);
+
+        if ($position === false)
+        {
+            return null;
+        }
+
+        return substr_replace($text, $image . $segment, $position, strlen($segment));
     }
 
     private function ImgReplace(array $option = [])

@@ -273,6 +273,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								'caption'  => $_title,
 								'alt'      => $imageAlt,
 								'lightbox' => 'photoswipe',
+								'link_class' => $gallstyle,
 								'pswp_gallery' => '',
 							]);
 						}
@@ -303,6 +304,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 							'caption'  => $_title,
 							'alt'      => $imageAlt,
 							'lightbox' => 'photoswipe',
+							'link_class' => $gallstyle,
 							'pswp_gallery' => '',
 						]);
 					}

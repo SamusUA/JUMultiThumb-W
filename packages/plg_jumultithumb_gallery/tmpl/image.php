@@ -27,6 +27,7 @@ defined('_JEXEC') or die;
 */
 
 $data = (object) $displayData;
+$linkClass = trim((string) ($data->link_class ?? ''));
 
 ?>
 <div class="col-xs-4 col-sm-3"<?php echo $data->lightbox_data; ?>>
@@ -37,6 +38,7 @@ $data = (object) $displayData;
 			<?php if($data->link_img) : ?>
 			<a
 					href="<?php echo htmlspecialchars($data->link, ENT_QUOTES, 'UTF-8'); ?>"
+				<?php echo ($linkClass !== '' ? ' class="' . htmlspecialchars($linkClass, ENT_QUOTES, 'UTF-8') . '"' : ''); ?>
 				<?php echo ($data->title ? ' title="' . htmlspecialchars($data->title, ENT_QUOTES, 'UTF-8') . '"' : '') . $data->lightbox . $data->pswp_data; ?>
 			>
 				<?php endif; ?>

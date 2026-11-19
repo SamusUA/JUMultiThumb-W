@@ -27,27 +27,34 @@ defined('_JEXEC') or die;
 */
 
 $data = (object) $displayData;
+$noResize = (int) ($data->noresize ?? 0);
+$linkClass = trim((string) ($data->link_class ?? ''));
+$imageClass = trim((string) ($data->image_class ?? ''));
+$captionText = (string) ($data->caption_text ?? '');
 
 ?>
-<?php if($data->noresize == 1): ?>
+<?php if($noResize === 1): ?>
 	<div class="row row-fluid">
 	<div class="col-xs-12 span12">
 <?php endif; ?>
 
-	<figure class="<?php echo htmlspecialchars($data->class, ENT_QUOTES, 'UTF-8') . ($data->noresize == 1 ? ' thumbnail' : ''); ?>">
+	<figure class="<?php echo htmlspecialchars($data->class, ENT_QUOTES, 'UTF-8') . ($noResize === 1 ? ' thumbnail' : ''); ?>">
 		<?php if($data->link_img) : ?>
-		<a href="<?php echo htmlspecialchars($data->link_img, ENT_QUOTES, 'UTF-8'); ?>"<?php echo ($data->title !== '' ? ' title="' . htmlspecialchars($data->title, ENT_QUOTES, 'UTF-8') . '"' : '') . $data->lightbox . $data->pswp_data; ?>>
+		<a href="<?php echo htmlspecialchars($data->link_img, ENT_QUOTES, 'UTF-8'); ?>"<?php echo ($linkClass !== '' ? ' class="' . htmlspecialchars($linkClass, ENT_QUOTES, 'UTF-8') . '"' : '') . ($data->title !== '' ? ' title="' . htmlspecialchars($data->title, ENT_QUOTES, 'UTF-8') . '"' : '') . $data->lightbox . $data->pswp_data; ?>>
 			<?php endif; ?>
 
 			<img
 					src="<?php echo htmlspecialchars($data->img, ENT_QUOTES, 'UTF-8'); ?>"
 					alt="<?php echo htmlspecialchars($data->alt, ENT_QUOTES, 'UTF-8'); ?>"
+				<?php echo ($imageClass !== '' ? ' class="' . htmlspecialchars($imageClass, ENT_QUOTES, 'UTF-8') . '"' : ''); ?>
 				<?php echo ($data->w ? ' width="' . (int) $data->w . '"' : '') . ($data->h ? ' height="' . (int) $data->h . '"' : ''); ?>
 			>
 
-			<?php if($data->alt != ''): ?>
+			<?php if($captionText !== ''): ?>
+				<figcaption itemprop="caption" class="text-muted"><?php echo htmlspecialchars($captionText, ENT_QUOTES, 'UTF-8'); ?></figcaption>
+			<?php elseif($data->alt != ''): ?>
 				<?php if($data->caption == 1): ?>
-					<figcaption itemprop="caption" class="text-muted"><?php echo $data->alt; ?></figcaption>
+					<figcaption itemprop="caption" class="text-muted"><?php echo htmlspecialchars($data->alt, ENT_QUOTES, 'UTF-8'); ?></figcaption>
 				<?php endif; ?>
 			<?php endif; ?>
 
@@ -57,7 +64,7 @@ $data = (object) $displayData;
 
 	</figure>
 
-<?php if($data->noresize == 1): ?>
+<?php if($noResize === 1): ?>
 	</div>
 	</div>
 <?php endif; ?>

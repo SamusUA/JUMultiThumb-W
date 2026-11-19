@@ -138,6 +138,7 @@ class Utils
 		$linkImage = (string) ($options['link_img'] ?? '');
 		$originalImage = (string) ($options['orig_img'] ?? '');
 		$lightbox = '';
+		$linkClass = trim((string) ($options['link_class'] ?? ''));
 		$lightboxData = '';
 		$pswpData = '';
 		$link = self::siteUrl($linkImage);
@@ -161,7 +162,8 @@ class Utils
 		}
 		elseif($lightboxMode === 'colorbox')
 		{
-			$lightbox = ' class="lightbox" rel="lightbox[gall]"';
+			$linkClass = trim('lightbox ' . $linkClass);
+			$lightbox = ' rel="lightbox[gall]"';
 		}
 		else
 		{
@@ -173,12 +175,16 @@ class Utils
 			'w'              => $options['w'] ?? 0,
 			'h'              => $options['h'] ?? 0,
 			'class'          => $options['class'] ?? '',
+			'image_class'    => $options['image_class'] ?? '',
+			'noresize'       => $options['noresize'] ?? 0,
 			'alt'            => $options['alt'] ?? '',
 			'caption'        => $options['caption'] ?? '',
+			'caption_text'   => $options['caption_text'] ?? '',
 			'title'          => $options['title'] ?? '',
 			'link_img'       => self::siteUrl($linkImage),
 			'orig_img'       => self::siteUrl($originalImage),
 			'link'           => $link,
+			'link_class'     => $linkClass,
 			'lightbox'       => $lightbox,
 			'lightbox_data'  => $lightboxData,
 			'pswp_data'      => $pswpData,
