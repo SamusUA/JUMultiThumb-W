@@ -56,7 +56,7 @@ if (Test-Path (Join-Path $root "language")) {
     Copy-Item -Path (Join-Path $root "language") -Destination (Join-Path $pkgDir "language") -Recurse -Force
 }
 
-$finalPkgZip = Join-Path $distDir "pkg_jumultithumb_v6.0.10-beta.zip"
+$finalPkgZip = Join-Path $distDir "pkg_jumultithumb_v6.0.11-beta.zip"
 New-StandardZip $pkgDir $finalPkgZip
 
 Write-Output "Created: $finalPkgZip ($((Get-Item $finalPkgZip).Length) bytes)"

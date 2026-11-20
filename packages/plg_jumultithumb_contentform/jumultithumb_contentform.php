@@ -30,6 +30,7 @@ class plgContentJUMultithumb_ContentForm extends CMSPlugin
 	public function __construct(&$subject, $config)
 	{
 		parent::__construct($subject, $config);
+		$this->loadLanguage();
 	}
 
 	/**

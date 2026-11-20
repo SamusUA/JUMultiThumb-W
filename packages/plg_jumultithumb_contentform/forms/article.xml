@@ -14,7 +14,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_OFF"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_WATERMARK_OFF">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
@@ -29,7 +29,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_WATERMARK_ORIGINAL">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
@@ -40,7 +40,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_INTROTEXT_IMG"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_WATERMARK_INTRO_ONLY">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
@@ -51,7 +51,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_WATERMARK_SMALL">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
@@ -66,7 +66,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_ORIG_GALERRY"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_GALLERY_ORIGINAL">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
@@ -77,7 +77,7 @@
 		            type="radio"
 		            default="0"
 		            label="PLG_JUMULTITHUMB_WATERMARK_SMALL_GALERRY"
-            >
+             description="PLG_JUMULTITHUMB_CONTENTFORM_HELP_GALLERY_SMALL">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>

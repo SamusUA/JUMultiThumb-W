@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.10-beta</version>
+    <version>6.0.11-beta</version>
     <description>PLG_JUMULTITHUMB_XML_DESCRIPTION</description>
 
     <files>
@@ -40,7 +40,7 @@
 		                layout="joomla.form.field.radio.switcher"
 		                default="1"
 		                label="PLG_JUMULTITHUMB_USEIMAGEGALLERY"
-                >
+                 description="PLG_JUMULTITHUMB_GALLERY_HELP_DISPLAY">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
@@ -51,7 +51,7 @@
 		                default="130"
 		                size="4"
 		                label="PLG_JUMULTITHUMB_WIDTH"
-		                description="PLG_JUMULTITHUMB_WIDTH_TIPS"
+		                description="PLG_JUMULTITHUMB_GALLERY_HELP_THUMB_WIDTH"
 		                showon="useimgagegallery:1"
                 />
 
@@ -61,7 +61,7 @@
 		                default="130"
 		                size="4"
 		                label="PLG_JUMULTITHUMB_HEIGHT"
-		                description="PLG_JUMULTITHUMB_HEIGHT_TIPS"
+		                description="PLG_JUMULTITHUMB_GALLERY_HELP_THUMB_HEIGHT"
 		                showon="useimgagegallery:1"
                 />
 
@@ -72,7 +72,7 @@
 		                default="1"
 		                label="PLG_JUMULTITHUMB_CROP_IMAGE"
 		                showon="useimgagegallery:1"
-                >
+                 description="PLG_JUMULTITHUMB_GALLERY_HELP_THUMB_CROP">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
@@ -87,7 +87,7 @@
 		                type="folderlist"
 		                default=""
 		                label="PLG_JUMULTITHUMB_GALLERY_FOLDER"
-		                description="PLG_JUMULTITHUMB_IMAGE_FOLDER_DESC"
+		                description="PLG_JUMULTITHUMB_GALLERY_HELP_FOLDER"
 		                directory="images"
 		                exclude="files|jursspublisher|tmp"
 		                hide_none="1"
@@ -100,7 +100,7 @@
 		                default="130"
 		                size="4"
 		                label="PLG_JUMULTITHUMB_WIDTH"
-		                description="PLG_JUMULTITHUMB_WIDTH_TIPS"
+		                description="PLG_JUMULTITHUMB_GALLERY_HELP_FOLDER_WIDTH"
                 />
 
                 <field name="gallheight"
@@ -108,13 +108,13 @@
                        default="130"
                        size="4"
                        label="PLG_JUMULTITHUMB_HEIGHT"
-                       description="PLG_JUMULTITHUMB_HEIGHT_TIPS" />
+                       description="PLG_JUMULTITHUMB_GALLERY_HELP_FOLDER_HEIGHT" />
 
                 <field name="gallcropzoom"
                        type="radio"
                        layout="joomla.form.field.radio.switcher"
                        default="1"
-                       label="PLG_JUMULTITHUMB_CROP_IMAGE">
+                       label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_GALLERY_HELP_FOLDER_CROP">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
@@ -227,13 +227,13 @@
 	                   type="text"
 	                   default=""
 	                   size="4"
-	                   label="PLG_JUMULTITHUMB_GALLERY_TITLE" />
+	                   label="PLG_JUMULTITHUMB_GALLERY_TITLE"  description="PLG_JUMULTITHUMB_GALLERY_HELP_TITLE"/>
 
                 <field name="cssclass"
                        type="text"
                        default=""
                        size="4"
-                       label="PLG_JUMULTITHUMB_GALLERY_CSSCLASS" />
+                       label="PLG_JUMULTITHUMB_GALLERY_CSSCLASS"  description="PLG_JUMULTITHUMB_GALLERY_HELP_CLASS"/>
 
             </fieldset>
 

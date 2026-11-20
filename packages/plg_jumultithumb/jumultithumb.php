@@ -62,27 +62,32 @@ class plgContentjumultithumb extends CMSPlugin
         $this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
     }
 
-    public function onContentBeforeDisplay($context, $article): void
+    public function onContentBeforeDisplay($context, $article): string
     {
         if ($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || !class_exists($this->modeHelper))
         {
-            return;
+            return '';
         }
 
         if ($this->app->getName() !== 'site' || !$this->modeHelper::view('Component') || $this->modeHelper::view('Article'))
         {
-            return;
+            return '';
         }
+
+        $introImage = (string) ($article->_jumultithumbIntroImage ?? '');
+        unset($article->_jumultithumbIntroImage);
 
         $onlyFirstImage = (int) $this->params->get('Only_For_First_Image');
         $link = $this->modeHelper::link($article);
         if ($link === '')
         {
-            return;
+            return $introImage;
         }
 
         $article->text = AutoLinks::handleImgLinks($article->text ?? '', $article->title ?? '', $link, $onlyFirstImage);
         $article->introtext = AutoLinks::handleImgLinks($article->introtext ?? '', $article->title ?? '', $link, $onlyFirstImage);
+
+        return $introImage;
     }
 
     public function onContentPrepare($context, $article): void
@@ -97,6 +102,7 @@ class plgContentjumultithumb extends CMSPlugin
             return;
         }
 
+        $isArticleView = $this->modeHelper::view('Article');
         $introText = isset($article->introtext) && is_string($article->introtext) ? $article->introtext : null;
         $text = isset($article->text) && is_string($article->text) ? $article->text : null;
         $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
@@ -161,16 +167,22 @@ class plgContentjumultithumb extends CMSPlugin
         $articleImagesModified = false;
         $articleText = is_string($article->text ?? null) ? $article->text : '';
         $introText = is_string($article->introtext ?? null) ? $article->introtext : '';
-        $introImage = $this->renderArticleImage($article, $articleImages, 'intro');
 
-        if ($introImage !== '')
+        if ($isArticleView)
         {
-            $updatedText = $this->prependImageToSegment($articleText, $introText, $introImage);
-
-            if ($updatedText !== null)
+            if (!empty($articleImages->image_intro))
             {
-                $article->text = $updatedText;
-                $article->introtext = $introImage . $introText;
+                $articleImages->image_intro = '';
+                $articleImagesModified = true;
+            }
+        }
+        else
+        {
+            $introImage = $this->renderArticleImage($article, $articleImages, 'intro');
+
+            if ($introImage !== '')
+            {
+                $article->_jumultithumbIntroImage = $introImage;
                 $articleImages->image_intro = '';
                 $articleImagesModified = true;
             }
@@ -180,20 +192,22 @@ class plgContentjumultithumb extends CMSPlugin
         $canViewFullText = !is_object($articleParams)
             || !method_exists($articleParams, 'get')
             || (bool) $articleParams->get('access-view', true);
-        $fullText = is_string($article->fulltext ?? null) ? $article->fulltext : '';
-
-        if ($this->modeHelper::view('Article') && $canViewFullText && $fullText !== '')
+        if ($isArticleView && $canViewFullText)
         {
             $fullTextImage = $this->renderArticleImage($article, $articleImages, 'fulltext');
 
             if ($fullTextImage !== '')
             {
-                $updatedText = $this->prependImageToSegment($articleText = (string) ($article->text ?? ''), $fullText, $fullTextImage, true);
+                $articleText = is_string($article->text ?? null) ? $article->text : '';
+                $introText = is_string($article->introtext ?? null) ? $article->introtext : '';
+                $updatedText = $introText === ''
+                    ? $fullTextImage . $articleText
+                    : $this->prependImageToSegment($articleText, $introText, $fullTextImage);
 
                 if ($updatedText !== null)
                 {
                     $article->text = $updatedText;
-                    $article->fulltext = $fullTextImage . $fullText;
+                    $article->introtext = $fullTextImage . $introText;
                     $articleImages->image_fulltext = '';
                     $articleImagesModified = true;
                 }
@@ -248,6 +262,8 @@ class plgContentjumultithumb extends CMSPlugin
         $height = (int) $this->params->get($prefix . 'height', 160);
         $width = $width > 0 ? $width : 160;
         $height = $height > 0 ? $height : 160;
+        $farcrop = (string) $this->params->get($prefix . 'farcrop', 0);
+        $mask = !$noResize && !in_array($farcrop, ['', '0'], true);
         $quality = (int) $this->params->get('quality', 85);
         $quality = $quality > 0 ? $quality : 85;
         $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
@@ -260,7 +276,7 @@ class plgContentjumultithumb extends CMSPlugin
         {
             $thumbnail = Image::thumb([
                 'image' => $source,
-                'zc' => $this->params->get($prefix . 'zc', 1),
+                'zc' => $mask ? 0 : $this->params->get($prefix . 'zc', 1),
                 'cropaspect' => (float) $this->params->get($prefix . 'cropaspect', 1.4),
                 'zoom_crop_bg' => (string) $this->params->get($prefix . 'zoomcropbg', '#eeeeee'),
                 'far_crop' => $this->params->get($prefix . 'farcrop', 0),
@@ -320,6 +336,7 @@ class plgContentjumultithumb extends CMSPlugin
             'class' => $figureClass,
             'image_class' => $imageClass,
             'noresize' => $noResize ? 1 : 0,
+            'mask' => $mask ? 1 : 0,
             'title' => $title,
             'alt' => $alt,
             'caption' => 0,
@@ -541,11 +558,12 @@ class plgContentjumultithumb extends CMSPlugin
         $farcropbg = $this->params->get('farcropbg');
         $noresize = $this->params->get('noresize');
         $nofullimg = $this->params->get('nofullimg');
+        $mask = (int) $noresize !== 1 && !in_array((string) $farcrop, ['', '0'], true);
 
         $thumbImg = Image::thumb([
             'image' => $imgsource,
             'noresize' => $noresize,
-            'zc' => $zc,
+            'zc' => $mask ? 0 : $zc,
             'cropaspect' => $cropaspect,
             'zoom_crop_bg' => $zoomCropBg,
             'w' => $w,
@@ -563,6 +581,7 @@ class plgContentjumultithumb extends CMSPlugin
             'link_img' => $linkImage,
             'w' => $w,
             'h' => $h,
+            'mask' => $mask ? 1 : 0,
             'title' => $title,
             'caption' => $title,
             'lightbox' => $lightbox,
