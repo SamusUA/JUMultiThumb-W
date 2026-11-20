@@ -221,10 +221,10 @@ class plgContentjumultithumb extends CMSPlugin
 
         $lightboxMode = (string) $this->params->get('selectlightbox', 'photoswipe');
         if ($this->params->get('uselightbox', '1') == 1
-            && in_array($lightboxMode, ['photoswipe', 'lightgallery'], true)
+            && in_array($lightboxMode, ['photoswipe', 'lightgallery', 'zoomora', 'glightbox', 'baguettebox'], true)
             && (!empty($articleImages->image_intro) || !empty($articleImages->image_fulltext)))
         {
-            Utils::loadPhotoSwipe();
+            Utils::loadLightbox($lightboxMode);
         }
     }
 
@@ -616,7 +616,10 @@ class plgContentjumultithumb extends CMSPlugin
 
                 case 'photoswipe':
                 case 'lightgallery':
-                    Utils::loadPhotoSwipe();
+                case 'zoomora':
+                case 'glightbox':
+                case 'baguettebox':
+                    Utils::loadLightbox((string) $this->params->get('selectlightbox'));
                     break;
 
                 default:

@@ -161,6 +161,11 @@ class Utils
 				}
 			}
 		}
+		elseif(in_array($lightboxMode, ['zoomora', 'glightbox', 'baguettebox'], true) && $linkImage !== '')
+		{
+			$group = (string) ($options['pswp_gallery'] ?? 'jumultithumb-inline');
+			$pswpData = ' data-jumt-lightbox="' . $lightboxMode . '" data-jumt-group="' . htmlspecialchars($group, ENT_QUOTES, 'UTF-8') . '"';
+		}
 		elseif($lightboxMode === 'colorbox')
 		{
 			$linkClass = trim('lightbox ' . $linkClass);
@@ -245,6 +250,43 @@ class Utils
 				['type' => 'module']
 			);
 		}
+	}
+
+	public static function loadLightbox(string $mode): void
+	{
+		if(in_array($mode, ['photoswipe', 'lightgallery'], true))
+		{
+			self::loadPhotoSwipe();
+			return;
+		}
+
+		$assets = [
+			'zoomora' => ['zoomora.umd.min.js', 'zoomora.css'],
+			'glightbox' => ['glightbox.min.js', 'glightbox.min.css'],
+			'baguettebox' => ['baguetteBox.min.js', 'baguetteBox.min.css'],
+		];
+
+		if(!isset($assets[$mode]))
+		{
+			return;
+		}
+
+		$document = Factory::getDocument();
+		$base = 'plugins/content/jumultithumb/assets/lightboxes';
+		$document->addStyleSheet(rtrim(Uri::root(true), '/') . '/' . $base . '/' . $mode . '/' . $assets[$mode][1]);
+		$manager = $document->getWebAssetManager();
+		$libraryName = 'plg_content_jumultithumb.' . $mode;
+		$initName = $libraryName . '-init';
+
+		if(!$manager->assetExists('script', $libraryName))
+		{
+			$manager->registerScript($libraryName, $base . '/' . $mode . '/' . $assets[$mode][0], [], ['defer' => true]);
+		}
+		if(!$manager->assetExists('script', $initName))
+		{
+			$manager->registerScript($initName, $base . '/lightbox-init.js', [], ['defer' => true, 'data-jumt-mode' => $mode], [$libraryName]);
+		}
+		$manager->useScript($initName);
 	}
 
 	/**
