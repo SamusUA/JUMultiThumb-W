@@ -14,8 +14,11 @@
 
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\Attribute\AllowUnauthorizedAdministratorAccess;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Toolbar\Button\CustomButton;
 use JUMultiThumb\Helpers\AutoLinks;
 use JUMultiThumb\Helpers\Image;
 use JUMultiThumb\Helpers\Utils;
@@ -62,9 +65,122 @@ class plgContentjumultithumb extends CMSPlugin
         $this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
     }
 
+    public function onAfterDispatch(): void
+    {
+        $app = $this->app;
+        $input = $app->getInput();
+
+        if(!$app->isClient('administrator')
+            || $input->getCmd('option') !== 'com_plugins'
+            || $input->getCmd('view') !== 'plugin'
+            || $input->getCmd('layout') !== 'edit')
+        {
+            return;
+        }
+
+        $user = $app->getIdentity();
+
+        if(!$user->authorise('core.manage', 'com_plugins') || !$user->authorise('core.edit', 'com_plugins'))
+        {
+            return;
+        }
+
+        $db = Factory::getDbo();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
+            ->where($db->quoteName('folder') . ' = ' . $db->quote('content'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('jumultithumb'));
+        $db->setQuery($query);
+        $extensionId = (int) $db->loadResult();
+
+        if($extensionId < 1 || $input->getInt('extension_id') !== $extensionId)
+        {
+            return;
+        }
+
+        $escape = static fn(string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $buttonHtml = sprintf(
+            '<button type="button" class="btn btn-secondary" data-jumt-clear-cache data-url="index.php?option=com_ajax&amp;plugin=jumultithumb&amp;group=content&amp;format=raw" data-token-name="%s" data-confirm="%s" data-working="%s" data-error="%s"><span class="icon-trash" aria-hidden="true"></span> %s</button><span class="ms-2" data-jumt-clear-cache-status role="status" aria-live="polite"></span>',
+            $escape(Session::getFormToken()),
+            $escape(Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_CONFIRM')),
+            $escape(Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_WORKING')),
+            $escape(Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_ERROR')),
+            $escape(Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_BUTTON'))
+        );
+        $toolbar = $app->getDocument()->getToolbar();
+        $toolbar->appendButton((new CustomButton('jumultithumb-clear-cache'))->html($buttonHtml));
+
+        $webAssetManager = $app->getDocument()->getWebAssetManager();
+        $scriptName = 'plg_content_jumultithumb.clear-cache';
+
+        if($webAssetManager->assetExists('script', $scriptName))
+        {
+            $webAssetManager->useScript($scriptName);
+        }
+        else
+        {
+            $webAssetManager->registerAndUseScript(
+                $scriptName,
+                'plugins/content/jumultithumb/assets/clear-cache.js',
+                [],
+                ['defer' => true]
+            );
+        }
+    }
+
+    #[AllowUnauthorizedAdministratorAccess]
+    public function onAjaxJumultithumb(): string
+    {
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        if(!$app->isClient('administrator')
+            || !$user->authorise('core.manage', 'com_plugins')
+            || !$user->authorise('core.edit', 'com_plugins'))
+        {
+            $app->setHeader('status', 403, true);
+
+            return json_encode(['success' => false, 'message' => Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_FORBIDDEN')], JSON_THROW_ON_ERROR);
+        }
+
+        if($app->input->getMethod() !== 'POST' || !Session::checkToken('post'))
+        {
+            $app->setHeader('status', 403, true);
+
+            return json_encode(['success' => false, 'message' => Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_FORBIDDEN')], JSON_THROW_ON_ERROR);
+        }
+
+        if($app->input->post->getCmd('task') !== 'clearCache')
+        {
+            $app->setHeader('status', 400, true);
+
+            return json_encode(['success' => false, 'message' => Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_ERROR')], JSON_THROW_ON_ERROR);
+        }
+
+        $result = Utils::clearGeneratedImageCache();
+
+        if($result['failed'] > 0)
+        {
+            $app->setHeader('status', 500, true);
+
+            return json_encode([
+                'success' => false,
+                'message' => Text::sprintf('PLG_JUMULTITHUMB_CACHE_CLEAR_PARTIAL', $result['deleted'], $result['failed']),
+            ], JSON_THROW_ON_ERROR);
+        }
+
+        $message = $result['deleted'] > 0
+            ? Text::sprintf('PLG_JUMULTITHUMB_CACHE_CLEAR_SUCCESS', $result['deleted'])
+            : Text::_('PLG_JUMULTITHUMB_CACHE_CLEAR_EMPTY');
+
+        return json_encode(['success' => true, 'message' => $message], JSON_THROW_ON_ERROR);
+    }
+
     public function onContentBeforeDisplay($context, $article): string
     {
-        if ($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || !class_exists($this->modeHelper))
+        if ($this->option !== 'com_content' || !Utils::isContentArticleContext($context) || !is_object($article) || !isset($article->catid, $article->slug) || !class_exists($this->modeHelper))
         {
             return '';
         }
@@ -92,7 +208,7 @@ class plgContentjumultithumb extends CMSPlugin
 
     public function onContentPrepare($context, $article): void
     {
-        if ($this->option !== 'com_content' || !is_object($article) || !class_exists($this->modeHelper))
+        if ($this->option !== 'com_content' || !Utils::isContentArticleContext($context) || !is_object($article) || !class_exists($this->modeHelper))
         {
             return;
         }
@@ -410,8 +526,17 @@ class plgContentjumultithumb extends CMSPlugin
 
     private function JUMultithumbReplacer(array $option = []): string
     {
+        $image = (string) ($option['image'] ?? '');
+        preg_match('/\bclass\s*=\s*(["\'])(.*?)\1/i', $image, $classMatch);
+        $classAttribute = (string) ($classMatch[2] ?? '');
+        $noimageClass = (string) $this->params->get('noimage_class', '');
+
+        if (!Utils::shouldProcessImage($classAttribute, (int) $this->params->get('resall', 1) === 1, $noimageClass))
+        {
+            return $image;
+        }
+
         $quality = $this->params->get('quality');
-        $noimageClass = $this->params->get('noimage_class');
         $thumbFilterColor = $this->params->get('thumb_filtercolor', 0);
         $colorized = $this->params->get('colorized', '25');
         $colorpicker = $this->params->get('colorpicker', '#0000ff');
@@ -517,37 +642,6 @@ class plgContentjumultithumb extends CMSPlugin
         $imgtitle = mb_strtoupper(mb_substr($imgtitle, 0, 1)) . mb_substr($imgtitle, 1);
         $title = ($imgAlt ?: $imgtitle);
         $title = ($title ?: ($option['article']->title ?? ''));
-
-        if ($this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage')
-        {
-            $size = getimagesize(JPATH_SITE . '/' . $imgsource);
-            $thumbnail = $imgsource;
-
-            if ($watermarkThumbnail !== null)
-            {
-                $thumbnail = Image::thumb([
-                    'image' => $imgsource,
-                    'zc' => 0,
-                    'w' => (int) $size[0],
-                    'h' => (int) $size[1],
-                    'q' => (int) $quality,
-                    'watermark' => $watermarkThumbnail,
-                ]);
-            }
-
-            $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality, $watermarkOriginal);
-
-            return Utils::image('jumultithumb', 'default', [
-                'image' => $thumbnail,
-                'orig_img' => $imgsource,
-                'link_img' => $linkImage,
-                'w' => $size[0],
-                'h' => $size[1],
-                'title' => $title,
-                'caption' => $title,
-                'lightbox' => $lightbox,
-            ]);
-        }
 
         $w = $this->params->get('width');
         $h = $this->params->get('height');

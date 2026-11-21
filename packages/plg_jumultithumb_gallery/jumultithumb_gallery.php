@@ -66,7 +66,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 */
 	public function onContentBeforeDisplay($context, $article): void
 	{
-		if($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || class_exists($this->modeHelper) === false)
+		if($this->option !== 'com_content' || !Utils::isContentArticleContext($context) || !is_object($article) || !isset($article->catid, $article->slug) || class_exists($this->modeHelper) === false)
 		{
 			return;
 		}
@@ -122,7 +122,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 	 */
 	public function onContentPrepare($context, $article): void
 	{
-		if($this->option !== 'com_content' || !is_object($article) || class_exists($this->modeHelper) === false)
+		if($this->option !== 'com_content' || !Utils::isContentArticleContext($context) || !is_object($article) || class_exists($this->modeHelper) === false)
 		{
 			return;
 		}
