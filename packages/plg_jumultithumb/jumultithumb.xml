@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studio@webus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.12-beta</version>
+    <version>6.0.11-beta</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -399,9 +399,6 @@
                  description="PLG_JUMULTITHUMB_HELP_LIGHTBOX_TYPE">
                     <option value="photoswipe">PhotoSwipe 5</option>
                     <option value="lightgallery">LightGallery (PhotoSwipe compatibility)</option>
-                    <option value="zoomora">Zoomora</option>
-                    <option value="glightbox">GLightbox</option>
-                    <option value="baguettebox">baguetteBox.js</option>
                     <option value="customjs">PLG_JUMULTITHUMB_CUSTOM_JS</option>
                 </field>
 

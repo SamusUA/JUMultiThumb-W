@@ -97,18 +97,8 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 
 		if($this->modeHelper::view('Component'))
 		{
-			Utils::loadLightbox($this->getGalleryLightbox());
+			Utils::loadPhotoSwipe();
 		}
-	}
-
-	private function getGalleryLightbox(): string
-	{
-		$plugin = PluginHelper::getPlugin('content', 'jumultithumb');
-		$params = $plugin ? json_decode((string) $plugin->params) : null;
-		$mode = (string) ($params->selectlightbox ?? 'photoswipe');
-
-		return in_array($mode, ['zoomora', 'glightbox', 'baguettebox'], true)
-			&& (string) ($params->uselightbox ?? '1') === '1' ? $mode : 'photoswipe';
 	}
 
 	/**
@@ -302,7 +292,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 								'title'    => $_title,
 								'caption'  => $_title,
 								'alt'      => $imageAlt,
-								'lightbox' => $this->getGalleryLightbox(),
+								'lightbox' => 'photoswipe',
 								'link_class' => $gallstyle,
 								'pswp_gallery' => '',
 							]);
@@ -334,7 +324,7 @@ class plgContentJUMULTITHUMB_Gallery extends CMSPlugin
 							'title'    => $_title,
 							'caption'  => $_title,
 							'alt'      => $imageAlt,
-							'lightbox' => $this->getGalleryLightbox(),
+							'lightbox' => 'photoswipe',
 							'link_class' => $gallstyle,
 							'pswp_gallery' => '',
 						]);
