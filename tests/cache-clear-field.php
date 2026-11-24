@@ -56,13 +56,24 @@ namespace {
 	}
 
 	$field = new TestCacheclearField();
-	$field->element = new \SimpleXMLElement('<field context="article" />');
-	$html = $field->renderInput();
+	$manifest = simplexml_load_file(__DIR__ . '/../packages/plg_jumultithumb/jumultithumb.xml');
+	$fields = $manifest->xpath('//field[@type="Cacheclear"]');
 	$expectedUrl = 'data-url="https://example.invalid/administrator/index.php?option=com_ajax&amp;plugin=jumultithumb&amp;group=content&amp;format=json"';
 
-	if(!str_contains($html, $expectedUrl) || !str_contains($html, 'data-context="article"') || !str_contains($html, 'data-token="test-token"'))
+	if(count($fields) !== 5)
 	{
-		throw new \RuntimeException('The cache button must use the authenticated administrator endpoint and context token.');
+		throw new \RuntimeException('Expected cache-clear fields for all five contexts.');
+	}
+
+	foreach($fields as $element)
+	{
+		$field->element = $element;
+		$context = (string) $element['context'];
+		$html = $field->renderInput();
+		if(!str_contains($html, $expectedUrl) || !str_contains($html, 'data-context="' . $context . '"') || !str_contains($html, 'data-token="test-token"'))
+		{
+			throw new \RuntimeException('The cache button must use the authenticated administrator endpoint and context token for ' . $context);
+		}
 	}
 
 	$field->element = new \SimpleXMLElement('<field context="invalid" />');

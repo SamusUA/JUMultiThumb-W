@@ -4,8 +4,11 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
+use JUMultiThumb\Helpers\ContextSettings;
 
 defined('JPATH_BASE') or die;
+
+require_once __DIR__ . '/../libraries/src/Helpers/ContextSettings.php';
 
 class JFormFieldCacheclear extends FormField
 {
@@ -14,9 +17,8 @@ class JFormFieldCacheclear extends FormField
 	protected function getInput(): string
 	{
 		$context = (string) $this->element['context'];
-		$validContexts = ['article', 'categories', 'category', 'featured'];
 
-		if(!in_array($context, $validContexts, true))
+		if(!in_array($context, ContextSettings::CONTEXTS, true))
 		{
 			throw new \UnexpectedValueException('Unsupported image cache context.');
 		}

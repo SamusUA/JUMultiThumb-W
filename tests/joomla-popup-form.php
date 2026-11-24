@@ -8,6 +8,8 @@ if($argc !== 2 || !is_file($argv[1] . '/includes/framework.php'))
 
 define('_JEXEC', 1);
 define('JPATH_BASE', realpath($argv[1]));
+$_SERVER['HTTP_HOST'] = '127.0.0.1';
+$_SERVER['DOCUMENT_ROOT'] = JPATH_BASE;
 require_once JPATH_BASE . '/includes/defines.php';
 require_once JPATH_BASE . '/includes/framework.php';
 
@@ -33,6 +35,13 @@ foreach(['article', 'categories', 'category', 'featured', 'module'] as $context)
 		throw new \RuntimeException('Installed fields missing for ' . $context);
 	}
 
+	$cacheFields = $manifest->xpath('//config/fields/fieldset/field[@name="' . $context . '_cache_clear"]');
+	if(count($cacheFields) !== 1)
+	{
+		throw new \RuntimeException('Installed cache-clear field missing for ' . $context);
+	}
+	$fields[] = $cacheFields[0];
+
 	$source = '<form><fields name="params" addfieldpath="/plugins/content/jumultithumb/fields/" addrulepath="/plugins/content/jumultithumb/rules/">';
 	foreach($fields as $field)
 	{
@@ -41,6 +50,11 @@ foreach(['article', 'categories', 'category', 'featured', 'module'] as $context)
 	$source .= '</fields></form>';
 	$form = new \Joomla\CMS\Form\Form('popup-' . $context);
 	$form->load($source);
+	$cacheField = $form->getField($context . '_cache_clear', 'params');
+	if($cacheField === false || !str_contains($cacheField->input, 'data-context="' . $context . '"'))
+	{
+		throw new \RuntimeException('Joomla cache-clear field could not be rendered for ' . $context);
+	}
 
 	foreach([
 		['watermark' => 1, 'width' => '', 'height' => '500', 'valid' => false],
