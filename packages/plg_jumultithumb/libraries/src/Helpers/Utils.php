@@ -171,12 +171,18 @@ class Utils
 			$lightbox = ' rel="{handler: \'image\', marginImage: {x: 50, y: 50}}"';
 		}
 
+		$imageClass = self::withClass((string) ($options['image_class'] ?? ''), 'jumultithumb-image');
+		if($pswpData !== '')
+		{
+			$linkClass = self::withClass($linkClass, 'jumultithumb-pswp');
+		}
+
 		return Utils::tmpl($plugin, $name, [
 			'img'            => self::siteUrl((string) ($options['image'] ?? '')),
 			'w'              => $options['w'] ?? 0,
 			'h'              => $options['h'] ?? 0,
 			'class'          => $options['class'] ?? '',
-			'image_class'    => $options['image_class'] ?? '',
+			'image_class'    => $imageClass,
 			'noresize'       => $options['noresize'] ?? 0,
 			'mask'           => $options['mask'] ?? 0,
 			'fit'            => $options['fit'] ?? 'cover',
@@ -192,6 +198,18 @@ class Utils
 			'lightbox_data'  => $lightboxData,
 			'pswp_data'      => $pswpData,
 		]);
+	}
+
+	private static function withClass(string $classes, string $required): string
+	{
+		$classList = preg_split('/\s+/', trim($classes), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+		if(!in_array($required, $classList, true))
+		{
+			array_unshift($classList, $required);
+		}
+
+		return implode(' ', $classList);
 	}
 
 	private static function imageDimensions(string $image, string $fallback = ''): array

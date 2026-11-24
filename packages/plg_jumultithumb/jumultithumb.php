@@ -12,10 +12,10 @@
  * @license          GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Folder;
@@ -31,11 +31,8 @@ require_once __DIR__ . '/libraries/vendor/autoload.php';
 class plgContentjumultithumb extends CMSPlugin
 {
     protected $modeHelper;
-    protected $juimg;
     protected $app;
-    protected ?Document $doc;
     protected $option;
-    protected $itemid;
 
     public function __construct(&$subject, $config)
     {
@@ -45,24 +42,6 @@ class plgContentjumultithumb extends CMSPlugin
 
         $this->app = Factory::getApplication();
         $this->option = (string) $this->app->input->get('option', '');
-        if ($this->option !== 'com_content')
-        {
-            return;
-        }
-
-        $this->doc = Factory::getDocument();
-        $this->itemid = $this->app->input->getInt('Itemid');
-
-        if (!class_exists('JUImage') && file_exists(JPATH_LIBRARIES . '/juimage/JUImage.php'))
-        {
-            require_once JPATH_LIBRARIES . '/juimage/JUImage.php';
-        }
-
-        if (class_exists('JUImage'))
-        {
-            $this->juimg = new JUImage();
-        }
-
         $this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
     }
 
@@ -115,12 +94,23 @@ class plgContentjumultithumb extends CMSPlugin
 
     public function onContentBeforeDisplay($context, $article): string
     {
-        if ($this->option !== 'com_content' || !is_object($article) || !isset($article->catid, $article->slug) || !class_exists($this->modeHelper))
+        if (!is_object($article))
         {
             return '';
         }
 
-        if ($this->app->getName() !== 'site' || !$this->modeHelper::view('Component') || $this->modeHelper::view('Article'))
+        if (($article->_jumultithumbImageContext ?? '') === 'module')
+        {
+            $introImage = (string) ($article->_jumultithumbIntroImage ?? '');
+            unset($article->_jumultithumbIntroImage);
+            unset($article->_jumultithumbImageContext);
+
+            return $this->app->getName() === 'site' ? $introImage : '';
+        }
+
+        if ($this->option !== 'com_content' || !isset($article->catid, $article->slug)
+            || !class_exists($this->modeHelper) || $this->app->getName() !== 'site'
+            || !$this->modeHelper::view('Component') || $this->modeHelper::view('Article'))
         {
             return '';
         }
@@ -143,17 +133,26 @@ class plgContentjumultithumb extends CMSPlugin
 
     public function onContentPrepare($context, $article): void
     {
-        if ($this->option !== 'com_content' || !is_object($article) || !class_exists($this->modeHelper))
+        if (!is_object($article) || !class_exists($this->modeHelper))
         {
             return;
         }
 
-        if ($this->app->getName() !== 'site' || !$this->modeHelper::view('Component'))
+        $isModuleEvent = ContextSettings::isModuleArticleEvent((string) $context, $article);
+        if ($this->app->getName() !== 'site'
+            || (!$isModuleEvent && ($this->option !== 'com_content'
+                || !str_starts_with((string) $context, 'com_content.')
+                || !$this->modeHelper::view('Component'))))
         {
             return;
         }
 
-        $isArticleView = $this->modeHelper::view('Article');
+        $imageContext = $isModuleEvent ? 'module' : $this->getImageContext();
+        if ($isModuleEvent)
+        {
+            $article->_jumultithumbImageContext = 'module';
+        }
+        $isArticleView = !$isModuleEvent && $this->modeHelper::view('Article');
         $introText = isset($article->introtext) && is_string($article->introtext) ? $article->introtext : null;
         $text = isset($article->text) && is_string($article->text) ? $article->text : null;
         $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
@@ -165,6 +164,7 @@ class plgContentjumultithumb extends CMSPlugin
             $processedIntroText = @$this->ImgReplace([
                 'text' => $introText,
                 'article' => $article,
+                'image_context' => $imageContext,
             ]);
             $article->introtext = $processedIntroText;
         }
@@ -181,10 +181,12 @@ class plgContentjumultithumb extends CMSPlugin
                 $article->text = @$this->ImgReplace([
                     'text' => substr($text, 0, $fullTextPosition),
                     'article' => $article,
+                    'image_context' => $imageContext,
                 ]) . @$this->ImgReplace([
                     'text' => substr($text, $fullTextPosition),
                     'article' => $article,
                     'use_wm' => 0,
+                    'image_context' => $imageContext,
                 ]);
             }
             else
@@ -192,6 +194,7 @@ class plgContentjumultithumb extends CMSPlugin
                 $article->text = @$this->ImgReplace([
                     'text' => $text,
                     'article' => $article,
+                    'image_context' => $imageContext,
                 ]);
             }
         }
@@ -202,6 +205,7 @@ class plgContentjumultithumb extends CMSPlugin
                 'text' => $article->fulltext,
                 'article' => $article,
                 'use_wm' => $watermarkAllowed ? 1 : 0,
+                'image_context' => $imageContext,
             ]);
         }
 
@@ -229,7 +233,7 @@ class plgContentjumultithumb extends CMSPlugin
         }
         else
         {
-            $introImage = $this->renderArticleImage($article, $articleImages, 'intro');
+            $introImage = $this->renderArticleImage($article, $articleImages, 'intro', $imageContext);
 
             if ($introImage !== '')
             {
@@ -245,7 +249,7 @@ class plgContentjumultithumb extends CMSPlugin
             || (bool) $articleParams->get('access-view', true);
         if ($isArticleView && $canViewFullText)
         {
-            $fullTextImage = $this->renderArticleImage($article, $articleImages, 'fulltext');
+            $fullTextImage = $this->renderArticleImage($article, $articleImages, 'fulltext', $imageContext);
 
             if ($fullTextImage !== '')
             {
@@ -279,7 +283,7 @@ class plgContentjumultithumb extends CMSPlugin
         }
     }
 
-    private function renderArticleImage(object $article, object $images, string $type): string
+    private function renderArticleImage(object $article, object $images, string $type, string $context): string
     {
         $imageField = 'image_' . $type;
         $source = Utils::img_source(trim((string) ($images->{$imageField} ?? '')));
@@ -310,7 +314,6 @@ class plgContentjumultithumb extends CMSPlugin
         $quality = $quality > 0 ? $quality : 85;
         $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
         $watermarkAllowed = $type !== 'fulltext' || (int) ($attribs->watermark_intro_only ?? 0) !== 1;
-        $context = $this->getImageContext();
         $variants = $this->imageVariants(
             $source,
             (int) $dimensions[0],
@@ -359,6 +362,7 @@ class plgContentjumultithumb extends CMSPlugin
             'caption' => 0,
             'caption_text' => $caption,
             'lightbox' => $lightbox,
+            'pswp_gallery' => ContextSettings::lightboxGroup($context),
         ]);
     }
 
@@ -403,16 +407,23 @@ class plgContentjumultithumb extends CMSPlugin
         {
             foreach ($imageAttr[0] as $image)
             {
+                if (preg_match('/\bclass\s*=\s*(["\'])[^"\']*\bjumultithumb-image\b[^"\']*\1/i', $image))
+                {
+                    continue;
+                }
+
                 $replace = $this->JUMultithumbReplacer([
                     'image' => $image,
                     'article' => $article,
                     'watermark_allowed' => $watermarkAllowed,
+                    'image_context' => $option['image_context'] ?? null,
                 ]);
                 $text = str_replace($image, $replace, $text);
             }
         }
 
-        if (($onlyImageBlog == 1 && $this->modeHelper::view('Blog')) || ($onlyImageCategory == 1 && $this->modeHelper::view('Category')) || ($onlyImageFeatured == 1 && $this->modeHelper::view('Featured')))
+        if (($option['image_context'] ?? '') !== 'module'
+            && (($onlyImageBlog == 1 && $this->modeHelper::view('Blog')) || ($onlyImageCategory == 1 && $this->modeHelper::view('Category')) || ($onlyImageFeatured == 1 && $this->modeHelper::view('Featured'))))
         {
             preg_match_all('/(<\s*img\s+src\s*=\s*"\s*("[^"]*"|\'[^\']*\'|[^"\s]+).*?>)/i', $text, $result);
             if (!empty($result[1][0]))
@@ -425,9 +436,11 @@ class plgContentjumultithumb extends CMSPlugin
         return $text;
     }
 
-    private function getImageContext(): string
+    private function getImageContext(?string $preferredContext = null): string
     {
-        return ContextSettings::forView((string) $this->app->input->getCmd('view'));
+        return $preferredContext === 'module'
+            ? 'module'
+            : ContextSettings::forView((string) $this->app->input->getCmd('view'));
     }
 
     private function imageVariants(
@@ -490,6 +503,8 @@ class plgContentjumultithumb extends CMSPlugin
 
         $noPopup = (int) ContextSettings::get($this->params, $context, 'nopopup', 0) === 1;
         $cropPopup = (int) ContextSettings::get($this->params, $context, 'popup_maxsize', 0) === 1;
+        $watermarkPopup = (int) ContextSettings::get($this->params, $context, 'watermark_popup', 0) === 1
+            && $watermarkAllowed && empty($attributes->watermark_off);
         $popupWidth = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'popup_width', 800));
         $popupHeight = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'popup_height', 500));
         $popup = '';
@@ -498,7 +513,12 @@ class plgContentjumultithumb extends CMSPlugin
         {
             $popup = $source;
 
-            if($cropPopup && ($popupWidth > 0 || $popupHeight > 0))
+            if($watermarkPopup && ($popupWidth === 0 || $popupHeight === 0))
+            {
+                Log::add('Popup watermark requires both popup dimensions to be greater than 1 for context ' . $context . '.', Log::WARNING, 'plg_content_jumultithumb');
+                $popup = '';
+            }
+            elseif(($cropPopup || $watermarkPopup) && ($popupWidth > 0 || $popupHeight > 0))
             {
                 $watermark = Image::watermarkOptions($this->params, $attributes, $context, false, $watermarkAllowed);
                 $popup = Image::thumb([
@@ -507,7 +527,7 @@ class plgContentjumultithumb extends CMSPlugin
                     'w' => $popupWidth,
                     'h' => $popupHeight,
                     'q' => $quality,
-                    'cache' => $cache,
+                    'cache' => $cache . '/popup/' . ($watermark !== null ? 'watermark' : 'normal'),
                     'watermark' => $watermark,
                 ]);
             }
@@ -636,7 +656,11 @@ class plgContentjumultithumb extends CMSPlugin
         }
 
         $attribs = json_decode((string) ($option['article']->attribs ?? '')) ?: new \stdClass();
-        $context = $this->getImageContext();
+        $context = $this->getImageContext(
+            isset($option['image_context']) && is_string($option['image_context'])
+                ? $option['image_context']
+                : null
+        );
         $skipThumbnail = $this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage';
         $variants = $this->imageVariants(
             $imgsource,
@@ -661,6 +685,7 @@ class plgContentjumultithumb extends CMSPlugin
             'title' => $title,
             'caption' => $title,
             'lightbox' => $lightbox,
+            'pswp_gallery' => ContextSettings::lightboxGroup($context),
         ]);
     }
 
@@ -699,7 +724,7 @@ class plgContentjumultithumb extends CMSPlugin
                     break;
             }
 
-            $this->doc->addScriptDeclaration($juhead);
+            Factory::getDocument()->addScriptDeclaration($juhead);
         }
 
         return true;

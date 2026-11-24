@@ -10,7 +10,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>studiowebus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.12-beta</version>
+    <version>6.0.13-beta</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -19,6 +19,7 @@
         <folder>adapters</folder>
         <folder>assets</folder>
         <folder>fields</folder>
+        <folder>rules</folder>
         <folder>libraries</folder>
         <folder>load</folder>
         <folder>tmpl</folder>
@@ -32,11 +33,12 @@
         <language tag="uk-UA">uk-UA/uk-UA.plg_content_jumultithumb.sys.ini</language>
     </languages>
 
-    <config addfieldpath="/plugins/content/jumultithumb/fields/">
+    <config addfieldpath="/plugins/content/jumultithumb/fields/" addrulepath="/plugins/content/jumultithumb/rules/">
 
         <fields
 		        name="params"
 		        addfieldpath="/plugins/content/jumultithumb/fields/"
+                addrulepath="/plugins/content/jumultithumb/rules/"
         >
 
             <fieldset name="BASIC">
@@ -431,9 +433,9 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="article_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="article_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="article_popup_width" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="article_popup_maxsize:1[OR]article_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="article_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
-                <field name="article_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="article_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="article_popup_height" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="article_popup_maxsize:1[OR]article_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="article_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
                 <field name="article_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
@@ -472,9 +474,9 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="categories_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="categories_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="categories_popup_width" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="categories_popup_maxsize:1[OR]categories_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="categories_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
-                <field name="categories_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="categories_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="categories_popup_height" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="categories_popup_maxsize:1[OR]categories_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="categories_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
                 <field name="categories_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
@@ -513,9 +515,9 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="category_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="category_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="category_popup_width" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="category_popup_maxsize:1[OR]category_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="category_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
-                <field name="category_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="category_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="category_popup_height" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="category_popup_maxsize:1[OR]category_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="category_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
                 <field name="category_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
@@ -554,9 +556,9 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="featured_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="featured_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="featured_popup_width" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="featured_popup_maxsize:1[OR]featured_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="featured_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
-                <field name="featured_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="featured_popup_maxsize:1" size="6" filter="integer" min="1">
+                <field name="featured_popup_height" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="featured_popup_maxsize:1[OR]featured_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="featured_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
                 </field>
                 <field name="featured_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
@@ -573,6 +575,47 @@
                 <field name="featured_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="featured">
                 </field>
             </fieldset>
+
+           <fieldset name="MODULE" label="PLG_JUMULTITHUMB_SETTINGS_MODULE">
+               <field name="module_nothumb" type="radio" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_NOTHUMB" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_nopopup" type="radio" label="PLG_JUMULTITHUMB_NOT_ORIG" description="PLG_JUMULTITHUMB_HELP_NOPOPUP" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_width" type="text" label="PLG_JUMULTITHUMB_WIDTH" description="PLG_JUMULTITHUMB_HELP_WIDTH" default="160" size="6" filter="integer" min="1">
+               </field>
+               <field name="module_height" type="text" label="PLG_JUMULTITHUMB_HEIGHT" description="PLG_JUMULTITHUMB_HELP_HEIGHT" default="160" size="6" filter="integer" min="1">
+               </field>
+               <field name="module_allow_upscale" type="radio" label="PLG_JUMULTITHUMB_ALLOW_UPSCALE" description="PLG_JUMULTITHUMB_HELP_UPSCALE" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_crop" type="radio" label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_HELP_CROP" default="1" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_popup_width" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="module_popup_maxsize:1[OR]module_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="module_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
+               </field>
+               <field name="module_popup_height" type="popupdimension" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="module_popup_maxsize:1[OR]module_watermark_popup:1" size="6" filter="integer" validate="popupdimension" watermark_field="module_watermark_popup" message="PLG_JUMULTITHUMB_POPUP_DIMENSION_INVALID">
+               </field>
+               <field name="module_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_watermark_popup" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_POPUP" description="PLG_JUMULTITHUMB_HELP_WATERMARK_POPUP" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_watermark_thumbnail" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_THUMBNAIL" description="PLG_JUMULTITHUMB_HELP_WATERMARK_THUMBNAIL" default="0" layout="joomla.form.field.radio.switcher">
+                   <option value="0">JNO</option>
+                   <option value="1">JYES</option>
+               </field>
+               <field name="module_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="module">
+               </field>
+           </fieldset>
 </fields>
     </config>
 </extension>
