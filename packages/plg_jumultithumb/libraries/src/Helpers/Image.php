@@ -93,14 +93,16 @@ class Image
 			];
 		}*/
 
+		$cache = trim((string) ($options['cache'] ?? 'img'), '/');
+		$cache = $cache !== '' ? $cache : 'img';
 		$imgparams = [
 			'w'     => $options[ 'w' ],
 			'h'     => $options[ 'h' ],
 			'q'     => $options[ 'q' ],
-			'cache' => 'img'
+			'cache' => $cache
 		];
 
-		$watermarkFilter = self::watermarkFilter($options['watermark'] ?? null, $options);
+		$watermarkFilter = self::watermarkFilter($options['watermark'] ?? null, $options, $cache);
 		$watermarkParams = [];
 
 		if($watermarkFilter !== null)
@@ -114,7 +116,7 @@ class Image
 		{
 			$_imgsource = $juImg->render($options[ 'image' ], [
 				'h'     => $options[ 'h' ],
-				'cache' => 'img'
+				'cache' => $cache
 			]);
 			$_imgsource = JPATH_BASE . '/' . $_imgsource;
 
@@ -137,24 +139,42 @@ class Image
 
 	public static function watermarkOptions(object $params, object $attributes, string $context, bool $small = false, bool $enabled = true): ?array
 	{
-		if(!$enabled || !empty($attributes->watermark_off) || (int) self::getParameter($params, 'wm_tab', 0) !== 1)
+		if(!$enabled || !empty($attributes->watermark_off))
 		{
 			return null;
 		}
 
-		$isGallery = $context === 'gallery';
-		$mode = (int) self::getParameter($params, $small ? 'a_watermark_s' : 'a_watermark', 0);
+		$settingsContext = $context === 'gallery' ? 'article' : $context;
 
-		if(!in_array($mode, [1, 2], true))
+		if(in_array($settingsContext, ContextSettings::CONTEXTS, true))
 		{
-			return null;
+			$setting = $small ? 'watermark_thumbnail' : 'watermark_popup';
+
+			if((int) ContextSettings::get($params, $settingsContext, $setting, 0) !== 1)
+			{
+				return null;
+			}
 		}
-
-		$articleField = ($isGallery ? 'watermark_gallery' : 'watermark') . ($small ? '_s' : '');
-
-		if($mode === 2 && (int) ($attributes->{$articleField} ?? 0) !== 1)
+		else
 		{
-			return null;
+			if((int) self::getParameter($params, 'wm_tab', 0) !== 1)
+			{
+				return null;
+			}
+
+			$mode = (int) self::getParameter($params, $small ? 'a_watermark_s' : 'a_watermark', 0);
+
+			if(!in_array($mode, [1, 2], true))
+			{
+				return null;
+			}
+
+			$articleField = ($context === 'gallery' ? 'watermark_gallery' : 'watermark') . ($small ? '_s' : '');
+
+			if($mode === 2 && (int) ($attributes->{$articleField} ?? 0) !== 1)
+			{
+				return null;
+			}
 		}
 
 		$image = trim((string) self::getParameter($params, 'watermark_image', ''));
@@ -186,7 +206,7 @@ class Image
 			: ($params->{$name} ?? $default);
 	}
 
-	private static function watermarkFilter(mixed $watermark, array $options): ?array
+	private static function watermarkFilter(mixed $watermark, array $options, string $cache): ?array
 	{
 		if(!is_array($watermark) || empty($watermark['image']))
 		{
@@ -308,7 +328,7 @@ class Image
 				$maxWidth,
 				$maxHeight
 			),
-			'cache' => 'img_wm_' . substr($watermarkHash, 0, 16),
+			'cache' => $cache . '/wm_' . substr($watermarkHash, 0, 16),
 		];
 	}
 

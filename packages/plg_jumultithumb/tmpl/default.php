@@ -32,12 +32,13 @@ $mask = (int) ($data->mask ?? 0) === 1 && (int) ($data->w ?? 0) > 0 && (int) ($d
 $linkClass = trim((string) ($data->link_class ?? ''));
 $imageClass = trim((string) ($data->image_class ?? ''));
 $captionText = (string) ($data->caption_text ?? '');
+$fit = ($data->fit ?? 'cover') === 'contain' ? 'contain' : 'cover';
 $maskFrameStyle = $mask
 	? ' style="width:100%;max-width:' . (int) $data->w . 'px;aspect-ratio:' . (int) $data->w . ' / ' . (int) $data->h . ';overflow:hidden;"'
 	: '';
 $maskLinkStyle = $mask ? ' style="display:block;width:100%;max-width:' . (int) $data->w . 'px;"' : '';
 $maskImageStyle = $mask
-	? ' style="display:block;width:100%;height:100%;object-fit:cover;object-position:center;"'
+	? ' style="display:block;width:100%;height:100%;object-fit:' . $fit . ';object-position:center;"'
 	: '';
 
 ?>

@@ -179,6 +179,7 @@ class Utils
 			'image_class'    => $options['image_class'] ?? '',
 			'noresize'       => $options['noresize'] ?? 0,
 			'mask'           => $options['mask'] ?? 0,
+			'fit'            => $options['fit'] ?? 'cover',
 			'alt'            => $options['alt'] ?? '',
 			'caption'        => $options['caption'] ?? '',
 			'caption_text'   => $options['caption_text'] ?? '',

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <extension
            type="plugin"
            group="content"
@@ -8,9 +8,9 @@
     <creationDate>2026-11-19</creationDate>
     <copyright>(C) 2007-2026 Denys Nosov, Joomla! Ukraine. (C) 2026 Sviatolsav Samus</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <authorEmail>studio@webus.in.ua</authorEmail>
+    <authorEmail>studiowebus.in.ua</authorEmail>
     <authorUrl>https://webus.in.ua</authorUrl>
-    <version>6.0.11-beta</version>
+    <version>6.0.12-beta</version>
     <description>PLG_JUMULTITHUMB_DESCRIPTION</description>
 
     <files>
@@ -55,6 +55,23 @@
 		                   type="note"
 		                   label=""
 		                   description="PLG_JUMULTITHUMB_NOTICE0" />
+
+                <field name="Only_For_First_Image" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_ONLY_FOR_FIRST_IMAGE" description="PLG_JUMULTITHUMB_HELP_FIRST_IMAGE">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="only_image_blog" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_ONLY_IMAGE" description="PLG_JUMULTITHUMB_HELP_ONLY_IMAGE_BLOG">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="only_image_category" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_ONLY_IMAGE" description="PLG_JUMULTITHUMB_HELP_ONLY_IMAGE_CATEGORY">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="only_image_featured" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_ONLY_IMAGE" description="PLG_JUMULTITHUMB_HELP_ONLY_IMAGE_FEATURED">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
 	                <field
 			                name="noimage_class"
@@ -253,15 +270,6 @@
 
 	            <fieldset name="WATERMARK">
 
-                <field name="wm_tab"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_WM_TAB" description="PLG_JUMULTITHUMB_HELP_WATERMARK_ENABLE">
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                </field>
-
                 <field name="watermark_image"
                        type="media"
                        label="PLG_JUMULTITHUMB_WATERMARK_UPLOAD"
@@ -269,25 +277,12 @@
                        directory="images"
                        types="images"
                        preview="tooltip"
-                       showon="wm_tab:1"
                 />
-
-                <field name="a_watermark"
-                       type="list"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG"
-                       showon="wm_tab:1"
-                 description="PLG_JUMULTITHUMB_HELP_WATERMARK_ORIGINAL">
-                    <option value="0">JNO</option>
-                    <option value="2">PLG_JUMULTITHUMB_WATERMARK_ARTICLE_SELECTED</option>
-                    <option value="1">JYES</option>
-                </field>
 
                 <field name="wmposition"
                        type="list"
                        default="BR"
                        label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_POSITION">
                     <option value="T">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
                     <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_B</option>
@@ -306,7 +301,6 @@
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_OPAC"
                        description="PLG_JUMULTITHUMB_HELP_WATERMARK_OPACITY"
-                       showon="wm_tab:1"
                 />
 
                 <field name="wmx"
@@ -314,7 +308,6 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_XMARGIN"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_MARGIN_X"/>
 
                 <field name="wmy"
@@ -322,25 +315,12 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_YMARGIN"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_MARGIN_Y"/>
-
-                <field name="a_watermark_s"
-                       type="list"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG"
-                       showon="wm_tab:1"
-                 description="PLG_JUMULTITHUMB_HELP_WATERMARK_SMALL">
-                    <option value="0">JNO</option>
-                    <option value="2">PLG_JUMULTITHUMB_WATERMARK_ARTICLE_SELECTED</option>
-                    <option value="1">JYES</option>
-                </field>
 
                 <field name="wmposition_s"
                        type="list"
                        default="BR"
                        label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG_POS"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_POSITION">
                     <option value="T">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_T</option>
                     <option value="B">PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG_POS_B</option>
@@ -359,7 +339,6 @@
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG_OPAC"
                        description="PLG_JUMULTITHUMB_HELP_WATERMARK_OPACITY"
-                       showon="wm_tab:1"
                 />
 
                 <field name="wmx_s"
@@ -367,7 +346,6 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_XMARGIN"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_MARGIN_X"/>
 
                 <field name="wmy_s"
@@ -375,7 +353,6 @@
                        default="0"
                        size="4"
                        label="PLG_JUMULTITHUMB_WATERMARK_IMG_YMARGIN"
-                       showon="wm_tab:1"
                  description="PLG_JUMULTITHUMB_HELP_WATERMARK_MARGIN_Y"/>
 
             </fieldset>
@@ -433,1882 +410,169 @@
 
             </fieldset>
 
-            <fieldset name="PLG_JUMULTITHUMB_BLOG_SETTING">
-
-                <field
-		                name="Only_For_First_Image"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_ONLY_FOR_FIRST_IMAGE"
-		                description="PLG_JUMULTITHUMB_HELP_FIRST_IMAGE"
-                >
+                        <fieldset name="ARTICLE" label="PLG_JUMULTITHUMB_SETTINGS_ARTICLE">
+                <field name="article_nothumb" type="radio" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_NOTHUMB" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="only_image_blog"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_ONLY_IMAGE"
-		                description="PLG_JUMULTITHUMB_HELP_ONLY_IMAGE_BLOG"
-                >
+                <field name="article_nopopup" type="radio" label="PLG_JUMULTITHUMB_NOT_ORIG" description="PLG_JUMULTITHUMB_HELP_NOPOPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_width"
-		                type="text"
-		                default="100"
-		                size="4"
-		                label="PLG_JUMULTITHUMB_WIDTH"
-		                description="PLG_JUMULTITHUMB_HELP_LEGACY_WIDTH"
-                />
-
-                <field
-		                name="b_height"
-		                type="text"
-		                default="100"
-		                size="4"
-		                label="PLG_JUMULTITHUMB_HEIGHT"
-		                description="PLG_JUMULTITHUMB_HELP_LEGACY_HEIGHT"
-                />
-
-                <field
-		                name="b_aoe"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="1"
-		                label="PLG_JUMULTITHUMB_AOE"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AOE">
+                <field name="article_width" type="text" label="PLG_JUMULTITHUMB_WIDTH" description="PLG_JUMULTITHUMB_HELP_WIDTH" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="article_height" type="text" label="PLG_JUMULTITHUMB_HEIGHT" description="PLG_JUMULTITHUMB_HELP_HEIGHT" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="article_allow_upscale" type="radio" label="PLG_JUMULTITHUMB_ALLOW_UPSCALE" description="PLG_JUMULTITHUMB_HELP_UPSCALE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_cropzoom"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="1"
-		                label="PLG_JUMULTITHUMB_CROP_IMAGE"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP">
+                <field name="article_crop" type="radio" label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_HELP_CROP" default="1" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_zoomcrop_params"
-		                type="list"
-		                default="1"
-		                label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-		                showon="b_cropzoom:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_POSITION">
-                    <option value="1">JDEFAULT</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
+                <field name="article_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="article_popup_maxsize:1" size="6" filter="integer" min="1">
                 </field>
-
-                <field
-		                name="b_auto_zoomcrop"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-		                showon="b_cropzoom:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AUTO_CROP">
+                <field name="article_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="article_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="article_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_cropaspect"
-		                type="text"
-		                default="1.4"
-		                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-		                showon="b_auto_zoomcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_ASPECT"/>
-
-                <field
-		                name="b_farcrop"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_IMAGE_FAR"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP">
+                <field name="article_watermark_popup" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_POPUP" description="PLG_JUMULTITHUMB_HELP_WATERMARK_POPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_farcrop_params"
-		                type="list"
-		                default="1"
-		                label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-		                showon="b_farcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_POSITION">
-                    <option value="1">JDEFAULT</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
+                <field name="article_watermark_thumbnail" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_THUMBNAIL" description="PLG_JUMULTITHUMB_HELP_WATERMARK_THUMBNAIL" default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="b_farcropbg"
-		                type="color"
-		                default="#eeeeee"
-		                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-		                showon="b_farcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-                <field
-		                name="b_sx"
-		                type="text"
-		                default=""
-		                size="4"
-		                label="PLG_JUMULTITHUMB_SX"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SX"/>
-
-                <field
-		                name="b_sy"
-		                type="text"
-		                default=""
-		                size="4"
-		                label="PLG_JUMULTITHUMB_SY"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SY"/>
-
+                <field name="article_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="article">
+                </field>
             </fieldset>
 
-	        <fieldset name="PLG_JUMULTITHUMB_CATEGORY_SETTING">
-
-                <field
-		                name="only_image_category"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_ONLY_IMAGE"
-		                description="PLG_JUMULTITHUMB_HELP_ONLY_IMAGE_CATEGORY"
-                >
+            <fieldset name="CATEGORIES" label="PLG_JUMULTITHUMB_SETTINGS_CATEGORIES">
+                <field name="categories_nothumb" type="radio" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_NOTHUMB" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="cat_noresize"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_NOT_THUMB"
-		                description="PLG_JUMULTITHUMB_HELP_LEGACY_NORESIZE"
-                >
+                <field name="categories_nopopup" type="radio" label="PLG_JUMULTITHUMB_NOT_ORIG" description="PLG_JUMULTITHUMB_HELP_NOPOPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="cat_nofullimg"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_NOT_ORIG"
-		                showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_NOFULLIMG">
+                <field name="categories_width" type="text" label="PLG_JUMULTITHUMB_WIDTH" description="PLG_JUMULTITHUMB_HELP_WIDTH" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="categories_height" type="text" label="PLG_JUMULTITHUMB_HEIGHT" description="PLG_JUMULTITHUMB_HELP_HEIGHT" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="categories_allow_upscale" type="radio" label="PLG_JUMULTITHUMB_ALLOW_UPSCALE" description="PLG_JUMULTITHUMB_HELP_UPSCALE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="cat_width"
-		                type="text"
-		                default="160"
-		                size="4"
-		                label="PLG_JUMULTITHUMB_WIDTH"
-		                description="PLG_JUMULTITHUMB_HELP_LEGACY_WIDTH"
-		                showon="cat_noresize:0"
-                />
-
-                <field
-		                name="cat_height"
-		                type="text"
-		                default="160"
-		                size="4"
-		                label="PLG_JUMULTITHUMB_HEIGHT"
-		                description="PLG_JUMULTITHUMB_HELP_LEGACY_HEIGHT"
-		                showon="cat_noresize:0"
-                />
-
-                <field
-		                name="cat_aoe"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="1"
-		                label="PLG_JUMULTITHUMB_AOE"
-		                showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AOE">
+                <field name="categories_crop" type="radio" label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_HELP_CROP" default="1" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field
-		                name="cat_cropzoom"
-		                type="radio"
-		                layout="joomla.form.field.radio.switcher"
-		                default="0"
-		                label="PLG_JUMULTITHUMB_CROP_IMAGE"
-		                showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP">
+                <field name="categories_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="categories_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="categories_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="categories_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="categories_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="cat_zoomcrop_params"
-                       type="list"
-                       default="1"
-                       label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-                       showon="cat_noresize:0[AND]cat_cropzoom:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_POSITION">
-                    <option value="1">JDEFAULT</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-                </field>
-
-                <field name="cat_auto_zoomcrop"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-                       showon="cat_noresize:0[AND]cat_cropzoom:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AUTO_CROP">
+                <field name="categories_watermark_popup" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_POPUP" description="PLG_JUMULTITHUMB_HELP_WATERMARK_POPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="cat_cropaspect"
-                       type="text"
-                       default="1.4"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-                       showon="cat_noresize:0[AND]cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_ASPECT"/>
-
-                <field name="cat_zoomcropbg"
-                       type="color"
-                       default="#eeeeee"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-                       showon="cat_noresize:0[AND]cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_BACKGROUND"/>
-
-                <field name="cat_farcrop"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_IMAGE_FAR"
-                       showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP">
+                <field name="categories_watermark_thumbnail" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_THUMBNAIL" description="PLG_JUMULTITHUMB_HELP_WATERMARK_THUMBNAIL" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="cat_farcrop_params"
-                       type="list"
-                       default="1"
-                       label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-                       showon="cat_noresize:0[AND]cat_farcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_POSITION">
-                    <option value="1">JDEFAULT</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
+                <field name="categories_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="categories">
                 </field>
-
-                <field name="cat_farcropbg"
-                       type="color"
-                       default="#eeeeee"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-                       showon="cat_noresize:0[AND]cat_farcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-                <field name="cat_sx"
-                       type="text"
-                       default=""
-                       size="4"
-                       label="PLG_JUMULTITHUMB_SX"
-                       showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SX"/>
-
-                <field name="cat_sy"
-                       type="text"
-                       default=""
-                       size="4"
-                       label="PLG_JUMULTITHUMB_SY"
-                       showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SY"/>
-
-                <field name="cat_maxsize_orig"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE"
-                       showon="cat_noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXSIZE">
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                </field>
-
-                <field name="cat_maxwidth"
-                       type="text"
-                       default="800"
-                       size="4"
-                       label="PLG_JUMULTITHUMB_MAX_WIDTH_FOR_ORIGINAL_IMAGE"
-                       showon="cat_noresize:0[AND]cat_maxsize_orig:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXWIDTH"/>
-
-                <field name="cat_maxheight"
-                       type="text"
-                       default="500"
-                       size="4"
-                       label="PLG_JUMULTITHUMB_MAX_HEIGHT_FOR_ORIGINAL_IMAGE"
-                       showon="cat_noresize:0[AND]cat_maxsize_orig:1"
-                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXHEIGHT"/>
-
             </fieldset>
 
-	        <fieldset name="ARTICLE">
-
-                <field name="noresize"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_NOT_THUMB"
-                       description="PLG_JUMULTITHUMB_HELP_ARTICLE_NORESIZE"
-                >
+            <fieldset name="CATEGORY" label="PLG_JUMULTITHUMB_SETTINGS_CATEGORY">
+                <field name="category_nothumb" type="radio" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_NOTHUMB" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="nofullimg"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_NOT_ORIG"
-                       showon="noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_ARTICLE_NOFULLIMG">
+                <field name="category_nopopup" type="radio" label="PLG_JUMULTITHUMB_NOT_ORIG" description="PLG_JUMULTITHUMB_HELP_NOPOPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="width"
-                       type="text"
-                       default="160"
-                       size="4"
-                       label="PLG_JUMULTITHUMB_WIDTH"
-                       description="PLG_JUMULTITHUMB_HELP_WIDTH"
-                       showon="noresize:0"
-                />
-
-                <field name="height"
-                       type="text"
-                       default="160"
-                       size="4"
-                       label="PLG_JUMULTITHUMB_HEIGHT"
-                       description="PLG_JUMULTITHUMB_HELP_HEIGHT"
-                       showon="noresize:0"
-                />
-
-                <field name="zc"
-                       type="list"
-                       default="1"
-                       label="PLG_JUMULTITHUMB_CROP_IMAGE"
-                       description="PLG_JUMULTITHUMB_HELP_CROP_MODE"
-                       showon="noresize:0"
-                >
-                   <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
+                <field name="category_width" type="text" label="PLG_JUMULTITHUMB_WIDTH" description="PLG_JUMULTITHUMB_HELP_WIDTH" default="160" size="6" filter="integer" min="1">
                 </field>
-
-                <field name="zoom_crop_bg"
-                       type="radio"
-                       layout="joomla.form.field.radio.switcher"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-                       showon="noresize:0"
-                 description="PLG_JUMULTITHUMB_HELP_AUTO_CROP">
+                <field name="category_height" type="text" label="PLG_JUMULTITHUMB_HEIGHT" description="PLG_JUMULTITHUMB_HELP_HEIGHT" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="category_allow_upscale" type="radio" label="PLG_JUMULTITHUMB_ALLOW_UPSCALE" description="PLG_JUMULTITHUMB_HELP_UPSCALE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-
-                <field name="cropaspect"
-                       type="text"
-                       default="1.4"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-                       showon="noresize:0[AND]zoom_crop_bg:1"
-                 description="PLG_JUMULTITHUMB_HELP_CROP_ASPECT"/>
-
-                <field name="zoomcropbg"
-                       type="color"
-                       default="#eeeeee"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-                       showon="noresize:0[AND]zoom_crop_bg:1"
-                 description="PLG_JUMULTITHUMB_HELP_CROP_BACKGROUND"/>
-
-                <field name="farcrop"
-                       type="list"
-                       default="0"
-                       label="PLG_JUMULTITHUMB_IMAGE_FAR_MASK"
-                       description="PLG_JUMULTITHUMB_HELP_CSS_MASK"
-                       showon="noresize:0"
-                >
-                     <option value="0">JNO</option>
+                <field name="category_crop" type="radio" label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_HELP_CROP" default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
                     <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
                 </field>
-
-                <field name="farcropbg"
-                       type="color"
-                       default="#eeeeee"
-                       label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-                       showon="noresize:0[AND]farcrop:1"
-                 description="PLG_JUMULTITHUMB_HELP_CSS_MASK_BACKGROUND"/>
-
+                <field name="category_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="category_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="category_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="category_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="category_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="category_watermark_popup" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_POPUP" description="PLG_JUMULTITHUMB_HELP_WATERMARK_POPUP" default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="category_watermark_thumbnail" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_THUMBNAIL" description="PLG_JUMULTITHUMB_HELP_WATERMARK_THUMBNAIL" default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="category_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="category">
+                </field>
             </fieldset>
 
-            <fieldset name="ARTICLE_IMAGES">
-                <field type="spacer" name="intro_image_settings" label="PLG_JUMULTITHUMB_ARTICLE_IMAGE_INTRO" />
-
-                <field name="intro_noresize" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_ARTICLE_IMAGE_NORESIZE">
+            <fieldset name="FEATURED" label="PLG_JUMULTITHUMB_SETTINGS_FEATURED">
+                <field name="featured_nothumb" type="radio" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_NOTHUMB" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="intro_nofullimg" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_NOT_ORIG" showon="intro_noresize:0" description="PLG_JUMULTITHUMB_HELP_ARTICLE_NOFULLIMG">
+                <field name="featured_nopopup" type="radio" label="PLG_JUMULTITHUMB_NOT_ORIG" description="PLG_JUMULTITHUMB_HELP_NOPOPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="intro_width" type="text" default="160" size="4" label="PLG_JUMULTITHUMB_WIDTH" showon="intro_noresize:0"  description="PLG_JUMULTITHUMB_HELP_WIDTH"/>
-                <field name="intro_height" type="text" default="160" size="4" label="PLG_JUMULTITHUMB_HEIGHT" showon="intro_noresize:0"  description="PLG_JUMULTITHUMB_HELP_HEIGHT"/>
-                <field name="intro_zc" type="list" default="1" label="PLG_JUMULTITHUMB_CROP_IMAGE" showon="intro_noresize:0" description="PLG_JUMULTITHUMB_HELP_CROP_MODE">
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
+                <field name="featured_width" type="text" label="PLG_JUMULTITHUMB_WIDTH" description="PLG_JUMULTITHUMB_HELP_WIDTH" default="160" size="6" filter="integer" min="1">
                 </field>
-                <field name="intro_zoom_crop_bg" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP" showon="intro_noresize:0" description="PLG_JUMULTITHUMB_HELP_AUTO_CROP">
+                <field name="featured_height" type="text" label="PLG_JUMULTITHUMB_HEIGHT" description="PLG_JUMULTITHUMB_HELP_HEIGHT" default="160" size="6" filter="integer" min="1">
+                </field>
+                <field name="featured_allow_upscale" type="radio" label="PLG_JUMULTITHUMB_ALLOW_UPSCALE" description="PLG_JUMULTITHUMB_HELP_UPSCALE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="intro_cropaspect" type="text" default="1.4" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT" showon="intro_noresize:0[AND]intro_zoom_crop_bg:1"  description="PLG_JUMULTITHUMB_HELP_CROP_ASPECT"/>
-                <field name="intro_zoomcropbg" type="color" default="#eeeeee" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG" showon="intro_noresize:0[AND]intro_zoom_crop_bg:1"  description="PLG_JUMULTITHUMB_HELP_CROP_BACKGROUND"/>
-                <field name="intro_farcrop" type="list" default="0" label="PLG_JUMULTITHUMB_IMAGE_FAR_MASK" showon="intro_noresize:0" description="PLG_JUMULTITHUMB_HELP_CSS_MASK">
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-                </field>
-                <field name="intro_farcropbg" type="color" default="#eeeeee" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG" showon="intro_noresize:0[AND]intro_farcrop:1"  description="PLG_JUMULTITHUMB_HELP_CSS_MASK_BACKGROUND"/>
-
-                <field type="spacer" name="fulltext_image_settings" label="PLG_JUMULTITHUMB_ARTICLE_IMAGE_FULLTEXT" />
-
-                <field name="fulltext_noresize" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_NOT_THUMB" description="PLG_JUMULTITHUMB_HELP_ARTICLE_IMAGE_NORESIZE">
+                <field name="featured_crop" type="radio" label="PLG_JUMULTITHUMB_CROP_IMAGE" description="PLG_JUMULTITHUMB_HELP_CROP" default="1" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="fulltext_nofullimg" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_NOT_ORIG" showon="fulltext_noresize:0" description="PLG_JUMULTITHUMB_HELP_ARTICLE_NOFULLIMG">
+                <field name="featured_popup_width" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_WIDTH" description="PLG_JUMULTITHUMB_HELP_POPUP_WIDTH" default="800" showon="featured_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="featured_popup_height" type="text" label="PLG_JUMULTITHUMB_POPUP_MAX_HEIGHT" description="PLG_JUMULTITHUMB_HELP_POPUP_HEIGHT" default="500" showon="featured_popup_maxsize:1" size="6" filter="integer" min="1">
+                </field>
+                <field name="featured_popup_maxsize" type="radio" label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE" description="PLG_JUMULTITHUMB_HELP_POPUP_MAXSIZE" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="fulltext_width" type="text" default="160" size="4" label="PLG_JUMULTITHUMB_WIDTH" showon="fulltext_noresize:0"  description="PLG_JUMULTITHUMB_HELP_WIDTH"/>
-                <field name="fulltext_height" type="text" default="160" size="4" label="PLG_JUMULTITHUMB_HEIGHT" showon="fulltext_noresize:0"  description="PLG_JUMULTITHUMB_HELP_HEIGHT"/>
-                <field name="fulltext_zc" type="list" default="1" label="PLG_JUMULTITHUMB_CROP_IMAGE" showon="fulltext_noresize:0" description="PLG_JUMULTITHUMB_HELP_CROP_MODE">
-                    <option value="0">JNO</option>
-                    <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-                </field>
-                <field name="fulltext_zoom_crop_bg" type="radio" layout="joomla.form.field.radio.switcher" default="0" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP" showon="fulltext_noresize:0" description="PLG_JUMULTITHUMB_HELP_AUTO_CROP">
+                <field name="featured_watermark_popup" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_POPUP" description="PLG_JUMULTITHUMB_HELP_WATERMARK_POPUP" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field name="fulltext_cropaspect" type="text" default="1.4" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT" showon="fulltext_noresize:0[AND]fulltext_zoom_crop_bg:1"  description="PLG_JUMULTITHUMB_HELP_CROP_ASPECT"/>
-                <field name="fulltext_zoomcropbg" type="color" default="#eeeeee" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG" showon="fulltext_noresize:0[AND]fulltext_zoom_crop_bg:1"  description="PLG_JUMULTITHUMB_HELP_CROP_BACKGROUND"/>
-                <field name="fulltext_farcrop" type="list" default="0" label="PLG_JUMULTITHUMB_IMAGE_FAR_MASK" showon="fulltext_noresize:0" description="PLG_JUMULTITHUMB_HELP_CSS_MASK">
+                <field name="featured_watermark_thumbnail" type="radio" label="PLG_JUMULTITHUMB_WATERMARK_THUMBNAIL" description="PLG_JUMULTITHUMB_HELP_WATERMARK_THUMBNAIL" default="0" layout="joomla.form.field.radio.switcher">
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
-                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
                 </field>
-                <field name="fulltext_farcropbg" type="color" default="#eeeeee" label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG" showon="fulltext_noresize:0[AND]fulltext_farcrop:1"  description="PLG_JUMULTITHUMB_HELP_CSS_MASK_BACKGROUND"/>
+                <field name="featured_cache_clear" type="Cacheclear" label="PLG_JUMULTITHUMB_CACHE_CLEAR" description="PLG_JUMULTITHUMB_HELP_CACHE_CLEAR" context="featured">
+                </field>
             </fieldset>
-
-	        <!--
-
-					  <fieldset name="ARTICLE">
-
-						  <field
-								  name="choose_settingsview"
-								  type="list"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_VIEW_SELECT"
-						  >
-							  <option value="1">COM_PLUGINS_PLG_JUMULTITHUMB_BLOG_SETTING_FIELDSET_LABEL</option>
-							  <option value="2">COM_PLUGINS_PLG_JUMULTITHUMB_CATEGORY_SETTING_FIELDSET_LABEL</option>
-							  <option value="3">COM_PLUGINS_ARTICLE_FIELDSET_LABEL</option>
-							  <option value="4">COM_PLUGINS_PLG_JUMULTITHUMB_FEATURED_SETTING_FIELDSET_LABEL</option>
-						  </field>
-
-						  <field
-								  name="Only_For_First_Image"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_ONLY_FOR_FIRST_IMAGE"
-								  description="PLG_JUMULTITHUMB_ONLY_FOR_FIRST_IMAGE_TIPS"
-								  showon="choose_settingsview:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="only_image_blog"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_ONLY_IMAGE"
-								  description="PLG_JUMULTITHUMB_ONLY_IMAGE_TIPS"
-								  showon="choose_settingsview:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="b_width"
-								  type="text"
-								  default="100"
-								  size="4"
-								  label="PLG_JUMULTITHUMB_WIDTH"
-								  description="PLG_JUMULTITHUMB_WIDTH_TIPS"
-								  showon="choose_settingsview:1"
-						  />
-
-						  <field
-								  name="b_height"
-								  type="text"
-								  default="100"
-								  size="4"
-								  label="PLG_JUMULTITHUMB_HEIGHT"
-								  description="PLG_JUMULTITHUMB_HEIGHT_TIPS"
-								  showon="choose_settingsview:1"
-						  />
-
-						  <field
-								  name="b_aoe"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_AOE"
-								  showon="choose_settingsview:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="b_cropzoom"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_CROP_IMAGE"
-								  showon="choose_settingsview:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="b_zoomcrop_params"
-								  type="list"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-								  showon="b_cropzoom:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field
-								  name="b_auto_zoomcrop"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-								  showon="b_cropzoom:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="b_cropaspect"
-								  type="text"
-								  default="1.4"
-								  label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-								  showon="b_cropzoom:1[AND]b_auto_zoomcrop:1"
-						  />
-
-						  <field
-								  name="b_farcrop"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_IMAGE_FAR"
-								  showon="choose_settingsview:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="b_farcrop_params"
-								  type="list"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-								  showon="b_farcrop:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field
-								  name="b_farcropbg"
-								  type="color"
-								  default="#eeeeee"
-								  label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								  showon="b_farcrop:1"
-						  />
-
-						  <field
-								  name="b_sx"
-								  type="text"
-								  default=""
-								  size="4"
-								  label="PLG_JUMULTITHUMB_SX"
-								  showon="choose_settingsview:1"
-						  />
-
-						  <field
-								  name="b_sy"
-								  type="text"
-								  default=""
-								  size="4"
-								  label="PLG_JUMULTITHUMB_SY"
-								  showon="choose_settingsview:1"
-						  />
-
-						  <field
-								  name="only_image_category"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_ONLY_IMAGE"
-								  description="PLG_JUMULTITHUMB_ONLY_IMAGE_TIPS"
-								  showon="choose_settingsview:2"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="cat_noresize"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_NOT_THUMB"
-								  description="PLG_JUMULTITHUMB_NOT_THUMB_TIPS"
-								  showon="choose_settingsview:2"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="cat_nofullimg"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_NOT_ORIG"
-								  showon="cat_noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="cat_width"
-								  type="text"
-								  default="160"
-								  size="4"
-								  label="PLG_JUMULTITHUMB_WIDTH"
-								  description="PLG_JUMULTITHUMB_WIDTH_TIPS"
-								  showon="cat_noresize:0"
-						  />
-
-						  <field
-								  name="cat_height"
-								  type="text"
-								  default="160"
-								  size="4"
-								  label="PLG_JUMULTITHUMB_HEIGHT"
-								  description="PLG_JUMULTITHUMB_HEIGHT_TIPS"
-								  showon="cat_noresize:0"
-						  />
-
-						  <field
-								  name="cat_aoe"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="1"
-								  label="PLG_JUMULTITHUMB_AOE"
-								  showon="cat_noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field
-								  name="cat_cropzoom"
-								  type="radio"
-								  layout="joomla.form.field.radio.switcher"
-								  default="0"
-								  label="PLG_JUMULTITHUMB_CROP_IMAGE"
-								  showon="cat_noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="cat_zoomcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-								 showon="cat_noresize:0[AND]cat_cropzoom:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="cat_auto_zoomcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-								 showon="cat_noresize:0[AND]cat_cropzoom:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="cat_cropaspect"
-								 type="text"
-								 default="1.4"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-								 showon="cat_noresize:0[AND]cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-						  />
-
-						  <field name="cat_zoomcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="cat_noresize:0[AND]cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-						  />
-
-						  <field name="cat_farcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR"
-								 showon="cat_noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="cat_farcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-								 showon="cat_noresize:0[AND]cat_farcrop:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="cat_farcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="cat_noresize:0[AND]cat_farcrop:1"
-						  />
-
-						  <field name="cat_sx"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SX"
-								 showon="cat_noresize:0"
-						  />
-
-						  <field name="cat_sy"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SY"
-								 showon="cat_noresize:0"
-						  />
-
-						  <field name="cat_maxsize_orig"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE"
-								 showon="cat_noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="cat_maxwidth"
-								 type="text"
-								 default="800"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_MAX_WIDTH_FOR_ORIGINAL_IMAGE"
-								 showon="cat_noresize:0[AND]cat_maxsize_orig:1"
-						  />
-
-						  <field name="cat_maxheight"
-								 type="text"
-								 default="500"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_MAX_HEIGHT_FOR_ORIGINAL_IMAGE"
-								 showon="cat_noresize:0[AND]cat_maxsize_orig:1"
-						  />
-
-						  <field name="noresize"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_NOT_THUMB"
-								 description="PLG_JUMULTITHUMB_NOT_THUMB_TIPS"
-								 showon="choose_settingsview:3"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="nofullimg"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_NOT_ORIG"
-								 showon="noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="width"
-								 type="text"
-								 default="160"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_WIDTH"
-								 description="PLG_JUMULTITHUMB_WIDTH_TIPS"
-								 showon="noresize:0"
-						  />
-
-						  <field name="height"
-								 type="text"
-								 default="160"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_HEIGHT"
-								 description="PLG_JUMULTITHUMB_HEIGHT_TIPS"
-								 showon="noresize:0"
-						  />
-
-						  <field name="aoe"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_AOE"
-								 showon="noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="sx"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SX"
-								 showon="noresize:0"
-						  />
-
-						  <field name="sy"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SY"
-								 showon="noresize:0"
-						  />
-
-						  <field name="cropzoom"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_CROP_IMAGE"
-								 showon="noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="zoomcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-								 showon="noresize:0[AND]cropzoom:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="auto_zoomcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-								 showon="noresize:0[AND]cropzoom:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="cropaspect"
-								 type="text"
-								 default="1.4"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-								 showon="noresize:0[AND]cropzoom:1[AND]auto_zoomcrop:1"
-						  />
-
-						  <field name="zoomcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="noresize:0[AND]cropzoom:1[AND]auto_zoomcrop:1"
-						  />
-
-						  <field name="farcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR"
-								 showon="noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="farcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-								 showon="noresize:0[AND]farcrop:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="farcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="noresize:0[AND]farcrop:1"
-						  />
-
-						  <field name="maxsize_orig"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE"
-								 showon="noresize:0"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="maxwidth"
-								 type="text"
-								 default="800"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_MAX_WIDTH_FOR_ORIGINAL_IMAGE"
-								 showon="noresize:0[AND]maxsize_orig:1"
-						  />
-
-						  <field name="maxheight"
-								 type="text"
-								 default="500"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_MAX_HEIGHT_FOR_ORIGINAL_IMAGE"
-								 showon="noresize:0[AND]maxsize_orig:1"
-						  />
-
-						  <field name="only_image_featured"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_ONLY_IMAGE"
-								 description="PLG_JUMULTITHUMB_ONLY_IMAGE_TIPS"
-								 showon="choose_settingsview:4"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="f_width"
-								 type="text"
-								 default="120"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_WIDTH"
-								 description="PLG_JUMULTITHUMB_WIDTH_TIPS"
-								 showon="choose_settingsview:4"
-						  />
-
-						  <field name="f_height"
-								 type="text"
-								 default="120"
-								 size="4"
-								 label="PLG_JUMULTITHUMB_HEIGHT"
-								 description="PLG_JUMULTITHUMB_HEIGHT_TIPS"
-								 showon="choose_settingsview:4"
-						  />
-
-						  <field name="f_aoe"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_AOE"
-								 showon="choose_settingsview:4"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="f_cropzoom"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_CROP_IMAGE"
-								 showon="choose_settingsview:4"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="f_zoomcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-								 showon="f_cropzoom:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="f_auto_zoomcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-								 showon="f_cropzoom:1"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="f_cropaspect"
-								 type="text"
-								 default="1.4"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-								 showon="f_cropzoom:1[AND]f_auto_zoomcrop:1"
-						  />
-
-						  <field name="f_zoomcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="f_cropzoom:1[AND]f_auto_zoomcrop:1"
-						  />
-
-						  <field name="f_farcrop"
-								 type="radio"
-								 layout="joomla.form.field.radio.switcher"
-								 default="0"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR"
-								 showon="choose_settingsview:4"
-						  >
-							  <option value="0">JNO</option>
-							  <option value="1">JYES</option>
-						  </field>
-
-						  <field name="f_farcrop_params"
-								 type="list"
-								 default="1"
-								 label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-								 showon="f_farcrop:1"
-						  >
-							  <option value="1">JDEFAULT</option>
-							  <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-							  <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-							  <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-							  <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-							  <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-							  <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-							  <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-							  <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-						  </field>
-
-						  <field name="f_farcropbg"
-								 type="color"
-								 default="#eeeeee"
-								 label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-								 showon="f_farcrop:1"
-						  />
-
-						  <field name="f_sx"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SX"
-								 showon="choose_settingsview:4"
-						  />
-
-						  <field name="f_sy"
-								 type="text"
-								 default=""
-								 size="4"
-								 label="PLG_JUMULTITHUMB_SY"
-								 showon="choose_settingsview:4"
-						  />
-
-					  </fieldset>
-		  -->
-	        
-	        <fieldset name="MENU_ITEM_TO_SETTING_IMAGE">
-
-	            <field
-			            name="items"
-			            label="PLG_JUMULTITHUMB_MENU_ITEM_SETTING2"
-			            type="subform"
-			            multiple="true"
-			            min="0"
-			            buttons="add,remove"
-			            layout="joomla.form.field.subform.repeatable"
-	             description="PLG_JUMULTITHUMB_HELP_MENU_ITEMS">
-					<form>
-						<field
-								name="choose_settingsview"
-								type="list"
-								default=""
-								label="PLG_JUMULTITHUMB_VIEW_SELECT"
-						 description="PLG_JUMULTITHUMB_HELP_MENU_VIEW">
-			                    <option value="">JSELECT</option>
-			                    <option value="1">COM_PLUGINS_PLG_JUMULTITHUMB_BLOG_SETTING_FIELDSET_LABEL</option>
-			                    <option value="2">COM_PLUGINS_PLG_JUMULTITHUMB_CATEGORY_SETTING_FIELDSET_LABEL</option>
-			                    <option value="3">COM_PLUGINS_ARTICLE_FIELDSET_LABEL</option>
-			                </field>
-
-			                <field
-					                name="menu_item"
-					                type="menuitem"
-					                multiple="true"
-					                size="5"
-					                state="1"
-					                label="Menu Item"
-					                description="PLG_JUMULTITHUMB_HELP_MENU_SELECTION"
-			                />
-
-						<!-- Article -->
-						<field
-								name="noresize"
-								type="radio"
-								layout="joomla.form.field.radio.switcher"
-								default="0"
-								label="PLG_JUMULTITHUMB_NOT_THUMB"
-								description="PLG_JUMULTITHUMB_HELP_LEGACY_NORESIZE"
-								showon="choose_settingsview:3"
-						>
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="nofullimg"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_NOT_ORIG"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_NOFULLIMG">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="width"
-					                type="text"
-					                default="160"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_WIDTH"
-					                description="PLG_JUMULTITHUMB_HELP_LEGACY_WIDTH"
-					                showon="choose_settingsview:3"
-			                />
-
-			                <field
-					                name="height"
-					                type="text"
-					                default="160"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_HEIGHT"
-					                description="PLG_JUMULTITHUMB_HELP_LEGACY_HEIGHT"
-					                showon="choose_settingsview:3"
-			                />
-
-			                <field
-					                name="aoe"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_AOE"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AOE">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cropzoom"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_CROP_IMAGE"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="zoomcrop_params"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-					                showon="cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_POSITION">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="auto_zoomcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-					                showon="cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AUTO_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cropaspect"
-					                type="text"
-					                default="1.4"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-					                showon="cropzoom:1[AND]auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_ASPECT"/>
-
-			                <field
-					                name="farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="cropzoom:1[AND]auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="farcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="farcrop_params"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-					                showon="farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_POSITION">
-			                    <option value="1">JDEFAULT</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="a_watermark"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_WATERMARK_ORIG_IMG"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_WATERMARK">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="a_watermark_s"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_WATERMARK_SMALL_IMG"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_WATERMARK_SMALL">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="maxsize_orig"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXSIZE">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="maxwidth"
-					                type="text"
-					                default="800"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_MAX_WIDTH_FOR_ORIGINAL_IMAGE"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXWIDTH"/>
-
-			                <field
-					                name="maxheight"
-					                type="text"
-					                default="500"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_MAX_HEIGHT_FOR_ORIGINAL_IMAGE"
-					                showon="choose_settingsview:3"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXHEIGHT"/>
-
-						<!-- Blog -->
-						<field
-								name="b_width"
-								type="text"
-								default="160"
-								size="4"
-								label="PLG_JUMULTITHUMB_WIDTH"
-								description="PLG_JUMULTITHUMB_HELP_LEGACY_WIDTH"
-								showon="choose_settingsview:1"
-						/>
-
-			                <field
-					                name="b_height"
-					                type="text"
-					                default="160"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_HEIGHT"
-					                description="PLG_JUMULTITHUMB_HELP_LEGACY_HEIGHT"
-					                showon="choose_settingsview:1"
-			                />
-
-			                <field
-					                name="b_aoe"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_AOE"
-					                showon="choose_settingsview:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AOE">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="b_cropzoom"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_CROP_IMAGE"
-					                showon="choose_settingsview:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="b_zoomcrop_params"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-					                showon="b_cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_POSITION">
-			                    <option value="1">JDEFAULT</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="b_auto_zoomcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-					                showon="b_cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AUTO_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="b_cropaspect"
-					                type="text"
-					                default="1.4"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-					                showon="b_cropzoom:1[AND]b_auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_ASPECT"/>
-
-			                <field
-					                name="b_farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="b_cropzoom:1[AND]b_auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="b_farcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR"
-					                showon="choose_settingsview:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="b_farcrop_params"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-					                showon="b_farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_POSITION">
-			                    <option value="1">JDEFAULT</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="b_farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="b_farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="b_sx"
-					                type="text"
-					                default=""
-					                size="4"
-					                label="PLG_JUMULTITHUMB_SX"
-					                showon="choose_settingsview:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SX"/>
-
-			                <field
-					                name="b_sy"
-					                type="text"
-					                default=""
-					                size="4"
-					                label="PLG_JUMULTITHUMB_SY"
-					                showon="choose_settingsview:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SY"/>
-
-						<!-- Category -->
-						<field
-								name="cat_noresize"
-								type="radio"
-								layout="joomla.form.field.radio.switcher"
-								default="0"
-								label="PLG_JUMULTITHUMB_NOT_THUMB"
-								description="PLG_JUMULTITHUMB_HELP_LEGACY_NORESIZE"
-								showon="choose_settingsview:2"
-						>
-				                    <option value="0">JNO</option>
-				                    <option value="1">JYES</option>
-							</field>
-
-			                <field
-					                name="cat_nofullimg"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_NOT_ORIG"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_NOFULLIMG">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_width"
-					                type="text"
-					                default="160"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_WIDTH"
-					                description="PLG_JUMULTITHUMB_HELP_LEGACY_WIDTH"
-					                showon="choose_settingsview:2"
-			                />
-
-			                <field
-					                name="cat_height"
-					                type="text"
-					                default="160"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_HEIGHT"
-					                description="PLG_JUMULTITHUMB_HELP_LEGACY_HEIGHT"
-					                showon="choose_settingsview:2"
-			                />
-
-			                <field
-					                name="cat_aoe"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_AOE"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AOE">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_cropzoom"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_CROP_IMAGE"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_zoomcrop_params"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_PARAMS"
-					                showon="cat_cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_POSITION">
-			                    <option value="1">JDEFAULT</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="cat_auto_zoomcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP"
-					                showon="cat_cropzoom:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_AUTO_CROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_cropaspect"
-					                type="text"
-					                default="1.4"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_ASPECT"
-					                showon="cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_CROP_ASPECT"/>
-
-			                <field
-					                name="cat_farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="cat_cropzoom:1[AND]cat_auto_zoomcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="cat_farcrop"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_farcrop_paramsnew5"
-					                type="list"
-					                default="1"
-					                label="PLG_JUMULTITHUMB_IMAGE_FAR_PARAMS"
-					                showon="cat_farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_POSITION">
-			                    <option value="1">JDEFAULT</option>
-			                    <option value="T">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TOP</option>
-			                    <option value="B">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BOTTOM</option>
-			                    <option value="L">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_LEFT</option>
-			                    <option value="R">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_RIGHT</option>
-			                    <option value="TL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TL</option>
-			                    <option value="TR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_TR</option>
-			                    <option value="BL">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BL</option>
-			                    <option value="BR">PLG_JUMULTITHUMB_IMAGE_ZOOM_CROP_BR</option>
-			                </field>
-
-			                <field
-					                name="cat_farcropbg"
-					                type="color"
-					                default="#eeeeee"
-					                label="PLG_JUMULTITHUMB_IMAGE_AUTO_ZOOM_CROP_BG"
-					                showon="cat_farcrop:1"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_FARCROP_BACKGROUND"/>
-
-			                <field
-					                name="cat_sx"
-					                type="text"
-					                default=""
-					                size="4"
-					                label="PLG_JUMULTITHUMB_SX"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SX"/>
-
-			                <field
-					                name="cat_sy"
-					                type="text"
-					                default=""
-					                size="4"
-					                label="PLG_JUMULTITHUMB_SY"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_SY"/>
-
-			                <field
-					                name="cat_maxsize_orig"
-					                type="radio"
-					                layout="joomla.form.field.radio.switcher"
-					                default="0"
-					                label="PLG_JUMULTITHUMB_MAX_SIZE_FOR_IMAGE"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXSIZE">
-			                    <option value="0">JNO</option>
-			                    <option value="1">JYES</option>
-			                </field>
-
-			                <field
-					                name="cat_maxwidth"
-					                type="text"
-					                default="800"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_MAX_WIDTH_FOR_ORIGINAL_IMAGE"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXWIDTH"/>
-
-			                <field
-					                name="cat_maxheight"
-					                type="text"
-					                default="500"
-					                size="4"
-					                label="PLG_JUMULTITHUMB_MAX_HEIGHT_FOR_ORIGINAL_IMAGE"
-					                showon="choose_settingsview:2"
-			                 description="PLG_JUMULTITHUMB_HELP_LEGACY_MAXHEIGHT"/>
-					</form>
-				</field>
-
-            </fieldset>
-
-        </fields>
+</fields>
     </config>
 </extension>

@@ -15,8 +15,12 @@
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Session\Session;
+use Joomla\Filesystem\Folder;
 use JUMultiThumb\Helpers\AutoLinks;
+use JUMultiThumb\Helpers\ContextSettings;
 use JUMultiThumb\Helpers\Image;
 use JUMultiThumb\Helpers\Utils;
 
@@ -60,6 +64,53 @@ class plgContentjumultithumb extends CMSPlugin
         }
 
         $this->modeHelper = '\\JUMultiThumb\\Adapters\\com_content';
+    }
+
+    public function onAjaxJumultithumb(): array
+    {
+        if (!Session::checkToken('get'))
+        {
+            throw new \RuntimeException(Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_ERROR'), 403);
+        }
+
+        if (!Factory::getUser()->authorise('core.manage', 'com_plugins'))
+        {
+            throw new \RuntimeException(Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_ERROR'), 403);
+        }
+
+        $context = Factory::getApplication()->input->getCmd('context');
+
+        if (!in_array($context, ContextSettings::CONTEXTS, true))
+        {
+            throw new \InvalidArgumentException(Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_ERROR'), 400);
+        }
+
+        $imageRoot = realpath(JPATH_ROOT . DIRECTORY_SEPARATOR . 'img');
+        $contextPath = $imageRoot === false
+            ? false
+            : realpath($imageRoot . DIRECTORY_SEPARATOR . $context);
+
+        if ($imageRoot === false || $contextPath === false)
+        {
+            return ['success' => true, 'message' => Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_EMPTY')];
+        }
+
+        $rootPrefix = rtrim(str_replace('\\', '/', $imageRoot), '/') . '/';
+        $normalizedContextPath = str_replace('\\', '/', $contextPath);
+
+        if (!is_dir($contextPath)
+            || strncasecmp($normalizedContextPath, $rootPrefix, strlen($rootPrefix)) !== 0
+            || basename($contextPath) !== $context)
+        {
+            throw new \RuntimeException(Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_ERROR'), 400);
+        }
+
+        if (!Folder::delete($contextPath))
+        {
+            throw new \RuntimeException(Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_ERROR'), 500);
+        }
+
+        return ['success' => true, 'message' => Text::_('PLG_JUMULTITHUMB_CLEAR_CACHE_DONE')];
     }
 
     public function onContentBeforeDisplay($context, $article): string
@@ -255,56 +306,22 @@ class plgContentjumultithumb extends CMSPlugin
             return '';
         }
 
-        $prefix = $type . '_';
-        $noResize = (int) $this->params->get($prefix . 'noresize', 0) === 1;
-        $noFullImage = (int) $this->params->get($prefix . 'nofullimg', 0) === 1;
-        $width = (int) $this->params->get($prefix . 'width', 160);
-        $height = (int) $this->params->get($prefix . 'height', 160);
-        $width = $width > 0 ? $width : 160;
-        $height = $height > 0 ? $height : 160;
-        $farcrop = (string) $this->params->get($prefix . 'farcrop', 0);
-        $mask = !$noResize && !in_array($farcrop, ['', '0'], true);
         $quality = (int) $this->params->get('quality', 85);
         $quality = $quality > 0 ? $quality : 85;
         $attribs = json_decode((string) ($article->attribs ?? '')) ?: new \stdClass();
         $watermarkAllowed = $type !== 'fulltext' || (int) ($attribs->watermark_intro_only ?? 0) !== 1;
-        $watermarkOriginal = Image::watermarkOptions($this->params, $attribs, 'image', false, $watermarkAllowed);
-        $watermarkThumbnail = Image::watermarkOptions($this->params, $attribs, 'image', true, $watermarkAllowed);
-        $thumbnail = $source;
-
-        if (!$noResize)
-        {
-            $thumbnail = Image::thumb([
-                'image' => $source,
-                'zc' => $mask ? 0 : $this->params->get($prefix . 'zc', 1),
-                'cropaspect' => (float) $this->params->get($prefix . 'cropaspect', 1.4),
-                'zoom_crop_bg' => (string) $this->params->get($prefix . 'zoomcropbg', '#eeeeee'),
-                'far_crop' => $this->params->get($prefix . 'farcrop', 0),
-                'farcrop' => $this->params->get($prefix . 'farcrop', 0),
-                'farcropbg' => (string) $this->params->get($prefix . 'farcropbg', '#eeeeee'),
-                'w' => $width,
-                'h' => $height,
-                'q' => $quality,
-                'watermark' => $watermarkThumbnail,
-            ]);
-        }
-        else
-        {
-            $width = (int) $dimensions[0];
-            $height = (int) $dimensions[1];
-
-            if ($watermarkThumbnail !== null)
-            {
-                $thumbnail = Image::thumb([
-                    'image' => $source,
-                    'zc' => 0,
-                    'w' => $width,
-                    'h' => $height,
-                    'q' => $quality,
-                    'watermark' => $watermarkThumbnail,
-                ]);
-            }
-        }
+        $context = $this->getImageContext();
+        $variants = $this->imageVariants(
+            $source,
+            (int) $dimensions[0],
+            (int) $dimensions[1],
+            $context,
+            $quality,
+            $attribs,
+            $watermarkAllowed
+        );
+        $width = $variants['width'];
+        $height = $variants['height'];
 
         $altEmpty = (int) ($images->{$imageField . '_alt_empty'} ?? 0) === 1;
         $alt = $altEmpty ? '' : (string) ($images->{$imageField . '_alt'} ?? '');
@@ -322,21 +339,21 @@ class plgContentjumultithumb extends CMSPlugin
             $imageClass = $imageClass !== '' ? $imageClass : (string) $articleParams->get($imageClassField, '');
         }
 
-        $linkImage = $noFullImage ? '' : Utils::largeImage($source, $quality, $watermarkOriginal);
         $lightbox = $this->params->get('uselightbox', '1') == 1
             ? (string) $this->params->get('selectlightbox', 'photoswipe')
             : '';
 
         return Utils::image('jumultithumb', 'default', [
-            'image' => $thumbnail,
+            'image' => $variants['thumbnail'],
             'orig_img' => $source,
-            'link_img' => $linkImage,
+            'link_img' => $variants['popup'],
             'w' => $width,
             'h' => $height,
             'class' => $figureClass,
             'image_class' => $imageClass,
-            'noresize' => $noResize ? 1 : 0,
-            'mask' => $mask ? 1 : 0,
+            'noresize' => $variants['noresize'] ? 1 : 0,
+            'mask' => $variants['mask'] ? 1 : 0,
+            'fit' => $variants['fit'],
             'title' => $title,
             'alt' => $alt,
             'caption' => 0,
@@ -408,6 +425,105 @@ class plgContentjumultithumb extends CMSPlugin
         return $text;
     }
 
+    private function getImageContext(): string
+    {
+        return ContextSettings::forView((string) $this->app->input->getCmd('view'));
+    }
+
+    private function imageVariants(
+        string $source,
+        int $sourceWidth,
+        int $sourceHeight,
+        string $context,
+        int $quality,
+        object $attributes,
+        bool $watermarkAllowed = true,
+        bool $skipThumbnail = false
+    ): array {
+        $width = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'width', 160));
+        $height = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'height', 160));
+        $noThumbnail = (int) ContextSettings::get($this->params, $context, 'nothumb', 0) === 1;
+        $allowUpscale = (int) ContextSettings::get($this->params, $context, 'allow_upscale', 0) === 1;
+        $createThumbnail = !$skipThumbnail
+            && !$noThumbnail
+            && ($width > 0 || $height > 0)
+            && ($allowUpscale || !ContextSettings::sourceBelowTarget($sourceWidth, $sourceHeight, $width, $height));
+        $cropThumbnail = (int) ContextSettings::get($this->params, $context, 'crop', 1) === 1;
+        $cache = ContextSettings::cachePath($context);
+        $thumbnail = $source;
+        $displayWidth = $sourceWidth;
+        $displayHeight = $sourceHeight;
+
+        if($createThumbnail)
+        {
+            $watermark = Image::watermarkOptions($this->params, $attributes, $context, true, $watermarkAllowed);
+            $thumbnail = Image::thumb([
+                'image' => $source,
+                'zc' => $cropThumbnail && $width > 0 && $height > 0 ? 1 : 0,
+                'w' => $width,
+                'h' => $height,
+                'q' => $quality,
+                'cache' => $cache,
+                'watermark' => $watermark,
+            ]);
+
+            if($cropThumbnail && $width > 0 && $height > 0)
+            {
+                $displayWidth = $width;
+                $displayHeight = $height;
+            }
+            elseif (!$cropThumbnail && $width > 0 && $height > 0)
+            {
+                $displayWidth = $width;
+                $displayHeight = $height;
+            }
+            else
+            {
+                $scale = min(
+                    $width > 0 ? $width / $sourceWidth : INF,
+                    $height > 0 ? $height / $sourceHeight : INF
+                );
+                $displayWidth = max(1, (int) round($sourceWidth * $scale));
+                $displayHeight = max(1, (int) round($sourceHeight * $scale));
+            }
+        }
+
+        $noPopup = (int) ContextSettings::get($this->params, $context, 'nopopup', 0) === 1;
+        $cropPopup = (int) ContextSettings::get($this->params, $context, 'popup_maxsize', 0) === 1;
+        $popupWidth = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'popup_width', 800));
+        $popupHeight = ContextSettings::dimension(ContextSettings::get($this->params, $context, 'popup_height', 500));
+        $popup = '';
+
+        if(!$noPopup)
+        {
+            $popup = $source;
+
+            if($cropPopup && ($popupWidth > 0 || $popupHeight > 0))
+            {
+                $watermark = Image::watermarkOptions($this->params, $attributes, $context, false, $watermarkAllowed);
+                $popup = Image::thumb([
+                    'image' => $source,
+                    'zc' => $popupWidth > 0 && $popupHeight > 0 ? 1 : 0,
+                    'w' => $popupWidth,
+                    'h' => $popupHeight,
+                    'q' => $quality,
+                    'cache' => $cache,
+                    'watermark' => $watermark,
+                ]);
+            }
+        }
+
+        return [
+            'thumbnail' => $thumbnail,
+            'popup' => $popup,
+            'width' => $displayWidth,
+            'height' => $displayHeight,
+            'noresize' => !$createThumbnail,
+            'mask' => $createThumbnail && !$cropThumbnail && $width > 0 && $height > 0,
+            'fit' => $cropThumbnail ? 'cover' : 'contain',
+        ];
+    }
+
     private function JUMultithumbReplacer(array $option = []): string
     {
         $quality = $this->params->get('quality');
@@ -427,12 +543,6 @@ class plgContentjumultithumb extends CMSPlugin
         $thumbBritSetting = $this->params->get('thumb_brit_seting', 50);
         $thumbCont = $this->params->get('thumb_cont', 0);
         $thumbContSetting = $this->params->get('thumb_cont_seting', 50);
-        $items = $this->params->get('items');
-
-        $attribs = json_decode((string) ($option['article']->attribs ?? '')) ?: new \stdClass();
-        $watermarkAllowed = (bool) ($option['watermark_allowed'] ?? true);
-        $watermarkOriginal = Image::watermarkOptions($this->params, $attribs, 'image', false, $watermarkAllowed);
-        $watermarkThumbnail = Image::watermarkOptions($this->params, $attribs, 'image', true, $watermarkAllowed);
 
         switch ($thumbFilterColor)
         {
@@ -518,70 +628,36 @@ class plgContentjumultithumb extends CMSPlugin
         $title = ($imgAlt ?: $imgtitle);
         $title = ($title ?: ($option['article']->title ?? ''));
 
-        if ($this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage')
+        $size = @getimagesize(JPATH_SITE . '/' . $imgsource);
+
+        if ($size === false)
         {
-            $size = getimagesize(JPATH_SITE . '/' . $imgsource);
-            $thumbnail = $imgsource;
-
-            if ($watermarkThumbnail !== null)
-            {
-                $thumbnail = Image::thumb([
-                    'image' => $imgsource,
-                    'zc' => 0,
-                    'w' => (int) $size[0],
-                    'h' => (int) $size[1],
-                    'q' => (int) $quality,
-                    'watermark' => $watermarkThumbnail,
-                ]);
-            }
-
-            $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality, $watermarkOriginal);
-
-            return Utils::image('jumultithumb', 'default', [
-                'image' => $thumbnail,
-                'orig_img' => $imgsource,
-                'link_img' => $linkImage,
-                'w' => $size[0],
-                'h' => $size[1],
-                'title' => $title,
-                'caption' => $title,
-                'lightbox' => $lightbox,
-            ]);
+            return $option['image'];
         }
 
-        $w = $this->params->get('width');
-        $h = $this->params->get('height');
-        $zc = $this->params->get('zc');
-        $zoomCropBg = $this->params->get('zoom_crop_bg');
-        $cropaspect = $this->params->get('cropaspect');
-        $farcrop = $this->params->get('farcrop');
-        $farcropbg = $this->params->get('farcropbg');
-        $noresize = $this->params->get('noresize');
-        $nofullimg = $this->params->get('nofullimg');
-        $mask = (int) $noresize !== 1 && !in_array((string) $farcrop, ['', '0'], true);
-
-        $thumbImg = Image::thumb([
-            'image' => $imgsource,
-            'noresize' => $noresize,
-            'zc' => $mask ? 0 : $zc,
-            'cropaspect' => $cropaspect,
-            'zoom_crop_bg' => $zoomCropBg,
-            'w' => $w,
-            'h' => $h,
-            'farcrop' => $farcrop,
-            'farcropbg' => $farcropbg,
-            'q' => $quality,
-            'watermark' => $watermarkThumbnail,
-        ]);
-        $linkImage = (int) $nofullimg === 1 ? '' : Utils::largeImage($imgsource, (int) $quality, $watermarkOriginal);
+        $attribs = json_decode((string) ($option['article']->attribs ?? '')) ?: new \stdClass();
+        $context = $this->getImageContext();
+        $skipThumbnail = $this->params->get('resall') == 0 && ($img['class'] ?? '') !== 'juimage';
+        $variants = $this->imageVariants(
+            $imgsource,
+            (int) $size[0],
+            (int) $size[1],
+            $context,
+            (int) $quality,
+            $attribs,
+            (bool) ($option['watermark_allowed'] ?? true),
+            $skipThumbnail
+        );
 
         return Utils::image('jumultithumb', 'default', [
-            'image' => $thumbImg,
+            'image' => $variants['thumbnail'],
             'orig_img' => $imgsource,
-            'link_img' => $linkImage,
-            'w' => $w,
-            'h' => $h,
-            'mask' => $mask ? 1 : 0,
+            'link_img' => $variants['popup'],
+            'w' => $variants['width'],
+            'h' => $variants['height'],
+            'noresize' => $variants['noresize'] ? 1 : 0,
+            'mask' => $variants['mask'] ? 1 : 0,
+            'fit' => $variants['fit'],
             'title' => $title,
             'caption' => $title,
             'lightbox' => $lightbox,
