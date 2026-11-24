@@ -523,7 +523,8 @@ class plgContentjumultithumb extends CMSPlugin
                 $watermark = Image::watermarkOptions($this->params, $attributes, $context, false, $watermarkAllowed);
                 $popup = Image::thumb([
                     'image' => $source,
-                    'zc' => $popupWidth > 0 && $popupHeight > 0 ? 1 : 0,
+                    'zc' => 0,
+                    'aoe' => 0,
                     'w' => $popupWidth,
                     'h' => $popupHeight,
                     'q' => $quality,

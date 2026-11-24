@@ -102,6 +102,11 @@ class Image
 			'cache' => $cache
 		];
 
+		if(array_key_exists('aoe', $options))
+		{
+			$imgparams['aoe'] = $options['aoe'];
+		}
+
 		$watermarkFilter = self::watermarkFilter($options['watermark'] ?? null, $options, $cache);
 		$watermarkParams = [];
 
@@ -273,6 +278,10 @@ class Image
 			$outputWidth > 0 ? $outputWidth / $sourceWidth : 1,
 			$outputHeight > 0 ? $outputHeight / $sourceHeight : 1
 		);
+		if(isset($options['aoe']) && !$options['aoe'])
+		{
+			$scale = min($scale, 1);
+		}
 
 		if(($options['zc'] ?? 0) == 0)
 		{

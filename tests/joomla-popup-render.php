@@ -26,17 +26,26 @@ require_once JPATH_PLUGINS . '/content/jumultithumb/jumultithumb.php';
 
 $fixture = 'jumultithumb-popup-test-' . bin2hex(random_bytes(6));
 $source = 'images/' . $fixture . '-source.png';
+$portrait = 'images/' . $fixture . '-portrait.png';
+$small = 'images/' . $fixture . '-small.png';
 $watermark = 'images/' . $fixture . '-watermark.png';
 $sourcePath = JPATH_ROOT . '/' . $source;
+$portraitPath = JPATH_ROOT . '/' . $portrait;
+$smallPath = JPATH_ROOT . '/' . $small;
 $watermarkPath = JPATH_ROOT . '/' . $watermark;
 $generated = [];
 
 try
 {
-	$image = imagecreatetruecolor(400, 300);
-	imagefill($image, 0, 0, imagecolorallocate($image, 40, 100, 160));
-	imagepng($image, $sourcePath);
-	imagedestroy($image);
+	foreach([[$sourcePath, 400, 300], [$portraitPath, 300, 400], [$smallPath, 40, 30]] as [$path, $width, $height])
+	{
+		$image = imagecreatetruecolor($width, $height);
+		imagefill($image, 0, 0, imagecolorallocate($image, 40, 100, 160));
+		imagefilledrectangle($image, 0, 0, (int) ($width / 5), $height - 1, imagecolorallocate($image, 255, 0, 0));
+		imagefilledrectangle($image, (int) ($width * 4 / 5), 0, $width - 1, $height - 1, imagecolorallocate($image, 0, 255, 0));
+		imagepng($image, $path);
+		imagedestroy($image);
+	}
 	$image = imagecreatetruecolor(40, 40);
 	imagefill($image, 0, 0, imagecolorallocate($image, 255, 0, 0));
 	imagepng($image, $watermarkPath);
@@ -57,33 +66,72 @@ try
 			'watermark_image' => $watermark,
 			'wmopst' => 100,
 		];
-		$params->setValue($plugin, new \Joomla\Registry\Registry($values));
-		$marked = $render->invoke($plugin, $source, 400, 300, $context, 85, new \stdClass())['popup'];
-		$values[$context . '_watermark_popup'] = 0;
-		$values[$context . '_popup_maxsize'] = 1;
-		$params->setValue($plugin, new \Joomla\Registry\Registry($values));
-		$plain = $render->invoke($plugin, $source, 400, 300, $context, 85, new \stdClass())['popup'];
-
-		foreach([$marked, $plain] as $path)
+		foreach([[$source, 400, 300, 106, 80], [$portrait, 300, 400, 60, 80]] as [$imageSource, $sourceWidth, $sourceHeight, $expectedWidth, $expectedHeight])
 		{
-			$absolute = JPATH_ROOT . '/' . ltrim($path, '/');
-			if(!is_file($absolute))
+			$legacy = \JUMultiThumb\Helpers\Image::thumb([
+				'image' => $imageSource,
+				'zc' => 1,
+				'w' => 120,
+				'h' => 80,
+				'q' => 85,
+				'cache' => 'img/' . $context . '/popup/normal',
+				'watermark' => null,
+			]);
+			$generated[] = JPATH_ROOT . '/' . ltrim($legacy, '/');
+			$values[$context . '_watermark_popup'] = 1;
+			$values[$context . '_popup_maxsize'] = 0;
+			$params->setValue($plugin, new \Joomla\Registry\Registry($values));
+			$marked = $render->invoke($plugin, $imageSource, $sourceWidth, $sourceHeight, $context, 85, new \stdClass())['popup'];
+			$values[$context . '_watermark_popup'] = 0;
+			$values[$context . '_popup_maxsize'] = 1;
+			$params->setValue($plugin, new \Joomla\Registry\Registry($values));
+			$plain = $render->invoke($plugin, $imageSource, $sourceWidth, $sourceHeight, $context, 85, new \stdClass())['popup'];
+
+			foreach([$marked, $plain] as $path)
 			{
-				throw new \RuntimeException('Popup file was not created: ' . $path);
+				$absolute = JPATH_ROOT . '/' . ltrim($path, '/');
+				if(!is_file($absolute))
+				{
+					throw new \RuntimeException('Popup file was not created: ' . $path);
+				}
+				$generated[] = $absolute;
+				$dimensions = getimagesize($absolute);
+				if($dimensions[0] !== $expectedWidth || $dimensions[1] !== $expectedHeight)
+				{
+					throw new \RuntimeException('Popup dimensions differ in ' . $context . ': ' . json_encode($dimensions));
+				}
 			}
-			$generated[] = $absolute;
-			$dimensions = getimagesize($absolute);
-			if($dimensions[0] !== 120 || $dimensions[1] !== 80)
+
+			$image = imagecreatefromjpeg(JPATH_ROOT . '/' . ltrim($plain, '/'));
+			$left = imagecolorsforindex($image, imagecolorat($image, 0, (int) ($expectedHeight / 2)));
+			$right = imagecolorsforindex($image, imagecolorat($image, $expectedWidth - 1, (int) ($expectedHeight / 2)));
+			imagedestroy($image);
+			if($left['red'] < 200 || $right['green'] < 200)
 			{
-				throw new \RuntimeException('Popup dimensions differ in ' . $context);
+				throw new \RuntimeException('Popup lost image edges or added padding in ' . $context);
+			}
+
+			if($plain === $legacy
+				|| !str_contains($marked, 'img/' . $context . '/popup/watermark/wm_')
+				|| !str_contains($plain, 'img/' . $context . '/popup/normal/')
+				|| hash_file('sha256', JPATH_ROOT . '/' . ltrim($marked, '/')) === hash_file('sha256', JPATH_ROOT . '/' . ltrim($plain, '/')))
+			{
+				throw new \RuntimeException('Popup cache variants were not separated for ' . $context);
 			}
 		}
 
-		if(!str_contains($marked, 'img/' . $context . '/popup/watermark/wm_')
-			|| !str_contains($plain, 'img/' . $context . '/popup/normal/')
-			|| hash_file('sha256', JPATH_ROOT . '/' . ltrim($marked, '/')) === hash_file('sha256', JPATH_ROOT . '/' . ltrim($plain, '/')))
+		foreach([0, 1] as $watermarked)
 		{
-			throw new \RuntimeException('Watermarked and unwatermarked popup copies were not separated for ' . $context);
+			$values[$context . '_watermark_popup'] = $watermarked;
+			$params->setValue($plugin, new \Joomla\Registry\Registry($values));
+			$smallPopup = $render->invoke($plugin, $small, 40, 30, $context, 85, new \stdClass())['popup'];
+			$smallAbsolute = JPATH_ROOT . '/' . ltrim($smallPopup, '/');
+			$generated[] = $smallAbsolute;
+			$smallDimensions = getimagesize($smallAbsolute);
+			if($smallDimensions[0] !== 40 || $smallDimensions[1] !== 30)
+			{
+				throw new \RuntimeException('Small popup image was enlarged in ' . $context);
+			}
 		}
 	}
 
@@ -129,7 +177,7 @@ finally
 			unlink($file);
 		}
 	}
-	foreach([$sourcePath, $watermarkPath] as $file)
+	foreach([$sourcePath, $portraitPath, $smallPath, $watermarkPath] as $file)
 	{
 		if(is_file($file))
 		{

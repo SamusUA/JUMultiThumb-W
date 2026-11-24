@@ -123,7 +123,7 @@ namespace
 
 		$result = $render($base);
 		check(count(Image::$calls) === 1, $context . ': watermark must create a popup when size processing is off');
-		check(Image::$calls[0]['w'] === 800 && Image::$calls[0]['h'] === 500 && Image::$calls[0]['zc'] === 1, $context . ': popup must use center-crop dimensions');
+		check(Image::$calls[0]['w'] === 800 && Image::$calls[0]['h'] === 500 && Image::$calls[0]['zc'] === 0 && Image::$calls[0]['aoe'] === 0, $context . ': popup must preserve the whole image within its size limits without enlargement');
 		check(Image::$calls[0]['watermark'] !== null && Image::$calls[0]['cache'] === 'img/' . $context . '/popup/watermark', $context . ': watermarked popup must have its own cache');
 		check($result['popup'] === 'img/' . $context . '/popup/watermark/rendered.jpg', $context . ': popup URL is incorrect');
 
@@ -132,6 +132,18 @@ namespace
 		$plain[$context . '_popup_maxsize'] = 1;
 		$render($plain);
 		check(Image::$calls[0]['watermark'] === null && Image::$calls[0]['cache'] === 'img/' . $context . '/popup/normal', $context . ': unwatermarked popup must have its own cache');
+		check(Image::$calls[0]['zc'] === 0, $context . ': unwatermarked popup must not crop');
+
+		$withThumbnail = $plain;
+		$withThumbnail[$context . '_nothumb'] = 0;
+		$withThumbnail[$context . '_width'] = 160;
+		$withThumbnail[$context . '_height'] = 160;
+		foreach([0, 1] as $crop)
+		{
+			$withThumbnail[$context . '_crop'] = $crop;
+			$render($withThumbnail);
+			check(count(Image::$calls) === 2 && Image::$calls[0]['zc'] === $crop && Image::$calls[1]['zc'] === 0, $context . ': thumbnail crop must stay independent of the popup');
+		}
 
 		$plain[$context . '_popup_maxsize'] = 0;
 		$result = $render($plain);
